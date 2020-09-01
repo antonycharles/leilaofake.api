@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LeilaoFake.Me.Api.FormsBodys
+namespace LeilaoFake.Me.Api.ModelsApi
 {
     public class LanceIncluirFormBody
     {

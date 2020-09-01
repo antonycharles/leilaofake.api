@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using LeilaoFake.Me.Api.ErrorsApi;
 using LeilaoFake.Me.Core.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,8 +39,27 @@ namespace LeilaoFake.Me.Api
             services.AddTransient<IUsuarioRepository, UsuarioRepository>();
             services.AddTransient<ILanceRepository, LanceRepository>();
 
+            services.AddApiVersioning();
 
-            services.AddControllers();
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+
+            services.AddControllers(options => {
+                options.Filters.Add(typeof(ErrorResponseFilter));
+            });
+
+            //https://github.com/domaindrivendev/Swashbuckle.AspNetCore
+            services.AddSwaggerGen(sg =>
+            {
+                sg.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "Leilão Fake",
+                    Description = "Documentação da Api.",
+                    Version = "1.0"
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +73,10 @@ namespace LeilaoFake.Me.Api
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(sgu => sgu.SwaggerEndpoint("/swagger/v1/swagger.json", "Versão 1.0"));
 
             app.UseEndpoints(endpoints =>
             {

@@ -12,10 +12,13 @@ namespace LeilaoFake.Me.Core.Repositories
     public class LanceRepository : ILanceRepository
     {
         private readonly IDbConnection _dbConnection;
+        private readonly IUsuarioRepository _usuarioRepository;
 
-        public LanceRepository(IDbConnection dbConnection)
+        public LanceRepository(IDbConnection dbConnection,
+            IUsuarioRepository usuarioRepository)
         {
             _dbConnection = dbConnection;
+            _usuarioRepository = usuarioRepository;
         }
 
         public async Task<Lance> GetLanceById(string lanceId)
@@ -38,6 +41,11 @@ namespace LeilaoFake.Me.Core.Repositories
 
         public async Task<Lance> InsertLanceAsync(Lance lance)
         {
+            var usuario = await _usuarioRepository.InsertUsuarioAsync(lance.Interessado);
+
+            if (usuario.Id != lance.Interessado.Id)
+                throw new ArgumentException("Usuário informado é inválido!");
+
             string sql = "INSERT INTO lances (Id, LeilaoId, InteressadoId, Data, Valor ) " +
                             "VALUES (@Id, @LeilaoId, @InteressadoId, @Data, @Valor)";
 

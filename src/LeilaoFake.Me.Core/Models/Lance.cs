@@ -27,6 +27,7 @@ namespace LeilaoFake.Me.Core.Models
         public string InteressadoId{ get; private set; }
 
         public Usuario _interessado;
+
         public Usuario Interessado {
             get
             {
