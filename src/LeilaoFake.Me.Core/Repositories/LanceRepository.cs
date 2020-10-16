@@ -13,12 +13,15 @@ namespace LeilaoFake.Me.Core.Repositories
     {
         private readonly IDbConnection _dbConnection;
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly ILeilaoRepository _leilaoRepository;
 
         public LanceRepository(IDbConnection dbConnection,
-            IUsuarioRepository usuarioRepository)
+            IUsuarioRepository usuarioRepository,
+            ILeilaoRepository leilaoRepository)
         {
             _dbConnection = dbConnection;
             _usuarioRepository = usuarioRepository;
+            _leilaoRepository = leilaoRepository;
         }
 
         public async Task<Lance> GetLanceById(string lanceId)
@@ -41,6 +44,14 @@ namespace LeilaoFake.Me.Core.Repositories
 
         public async Task<Lance> InsertLanceAsync(Lance lance)
         {
+
+            var leilao = await _leilaoRepository.GetLeilaoByIdAsync(lance.LeilaoId);
+
+            if (leilao == null)
+                throw new ArgumentException("Leilão não encontrado!");
+
+            leilao.RecebeLance(lance);
+
             var usuario = await _usuarioRepository.InsertUsuarioAsync(lance.Interessado);
 
             if (usuario.Id != lance.Interessado.Id)

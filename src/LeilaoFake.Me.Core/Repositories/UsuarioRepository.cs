@@ -30,7 +30,7 @@ namespace LeilaoFake.Me.Core.Repositories
         {
             var usuarioExiste = await this.GetUsuariobyId(usuario.Id);
 
-            if (usuarioExiste.Id != null)
+            if (usuarioExiste != null)
                 return usuarioExiste;
             
             string sql = "INSERT INTO usuarios (Id, Nome ) VALUES (@Id, @Nome)";

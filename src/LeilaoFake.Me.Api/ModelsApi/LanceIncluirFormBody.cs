@@ -24,7 +24,7 @@ namespace LeilaoFake.Me.Api.ModelsApi
         public Lance ToLance()
         {
             var interredado = new Usuario(this.InteressadoId, this.InteressadoNome);
-            return new Lance(null, interredado, this.Valor);
+            return new Lance(null, interredado, this.Valor, this.LeilaoId);
         }
     }
 }

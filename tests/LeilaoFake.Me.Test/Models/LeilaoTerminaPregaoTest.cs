@@ -25,8 +25,8 @@ namespace LeilaoFake.Me.Test.Models
 
             leilao.IniciaPregao();
 
-            leilao.RecebeLance(new Lance(null, andre, 300));
-            leilao.RecebeLance(new Lance(null, bruno, 400));
+            leilao.RecebeLance(new Lance(null, andre, 300, leilao.Id));
+            leilao.RecebeLance(new Lance(null, bruno, 400, leilao.Id));
 
             //Act - método sob teste.
             leilao.FinalizarLeilao();
@@ -74,10 +74,10 @@ namespace LeilaoFake.Me.Test.Models
 
             leilao.IniciaPregao();
 
-            var lance1 = new Lance("1111", andre, 300);
+            var lance1 = new Lance("1111", andre, 300, leilao.Id);
             leilao.RecebeLance(lance1);
 
-            var lance2 = new Lance("4444", bruno, 400);
+            var lance2 = new Lance("4444", bruno, 400, leilao.Id);
             leilao.RecebeLance(lance2);
 
             //Act - método sob teste.
@@ -114,11 +114,11 @@ namespace LeilaoFake.Me.Test.Models
             {
                 if (i % 2 == 0)
                 {
-                    leilao.RecebeLance(new Lance(null, bruno, lanceValores[i]));
+                    leilao.RecebeLance(new Lance(null, bruno, lanceValores[i], leilao.Id));
                 }
                 else
                 {
-                    leilao.RecebeLance(new Lance(null, andre, lanceValores[i]));
+                    leilao.RecebeLance(new Lance(null, andre, lanceValores[i], leilao.Id));
                 }
             }
 
