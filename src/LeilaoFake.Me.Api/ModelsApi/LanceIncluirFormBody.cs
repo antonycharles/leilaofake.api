@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LeilaoFake.Me.Api.FormsBodys
+namespace LeilaoFake.Me.Api.ModelsApi
 {
     public class LanceIncluirFormBody
     {
@@ -24,7 +24,7 @@ namespace LeilaoFake.Me.Api.FormsBodys
         public Lance ToLance()
         {
             var interredado = new Usuario(this.InteressadoId, this.InteressadoNome);
-            return new Lance(null, interredado, this.Valor);
+            return new Lance(null, interredado, this.Valor, this.LeilaoId);
         }
     }
 }

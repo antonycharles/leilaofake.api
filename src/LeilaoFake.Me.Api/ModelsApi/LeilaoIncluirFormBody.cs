@@ -6,11 +6,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LeilaoFake.Me.Api.FormsBodys
+namespace LeilaoFake.Me.Api.ModelsApi
 {
     public class LeilaoIncluirFormBody
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Título do leilão obrigatório")]
+        [MaxLength(200, ErrorMessage = "Título não pode ser superior a 200 caracteres")]
         public string Titulo { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Leiloador id obrigatório")]

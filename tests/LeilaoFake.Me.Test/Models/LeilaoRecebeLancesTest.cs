@@ -35,11 +35,11 @@ namespace LeilaoFake.Me.Test.Models
             {
                 if (i % 2 == 0)
                 {
-                    leilao.RecebeLance(new Lance(null, bruno, lanceValores[i]));
+                    leilao.RecebeLance(new Lance(null, bruno, lanceValores[i],leilao.Id));
                 }
                 else
                 {
-                    leilao.RecebeLance(new Lance(null, andre, lanceValores[i]));
+                    leilao.RecebeLance(new Lance(null, andre, lanceValores[i], leilao.Id));
                 }
             }
 
@@ -64,13 +64,13 @@ namespace LeilaoFake.Me.Test.Models
 
             leilao.IniciaPregao();
 
-            leilao.RecebeLance(new Lance(null, andre, 300));
-            leilao.RecebeLance(new Lance(null, bruno, 400));
+            leilao.RecebeLance(new Lance(null, andre, 300, leilao.Id));
+            leilao.RecebeLance(new Lance(null, bruno, 400, leilao.Id));
 
             //Assert
             Assert.Throws<LeilaoUltimoLanceMesmoClienteException>(
                 //Act
-                () => leilao.RecebeLance(new Lance(null, bruno, 500))
+                () => leilao.RecebeLance(new Lance(null, bruno, 500, leilao.Id))
             );
         }
 
@@ -90,7 +90,7 @@ namespace LeilaoFake.Me.Test.Models
             //Assert
             Assert.Throws<LeilaoNaoEstaEmAndamentoException>(
                 //Act
-                () => leilao.RecebeLance(new Lance(null, andre, 300))
+                () => leilao.RecebeLance(new Lance(null, andre, 300, leilao.Id))
             );
         }
 
@@ -112,7 +112,7 @@ namespace LeilaoFake.Me.Test.Models
             //Assert
             Assert.Throws<LeilaoLanceForaDoPrazoException>(
                 //Act
-                () => leilao.RecebeLance(new Lance(null, andre, 300))
+                () => leilao.RecebeLance(new Lance(null, andre, 300, leilao.Id))
             );
         }
 
@@ -134,7 +134,7 @@ namespace LeilaoFake.Me.Test.Models
             //Assert
             Assert.Throws<LeilaoLanceForaDoPrazoException>(
                 //Act
-                () => leilao.RecebeLance(new Lance(null, andre, 300))
+                () => leilao.RecebeLance(new Lance(null, andre, 300, leilao.Id))
             );
         }
 
@@ -155,7 +155,7 @@ namespace LeilaoFake.Me.Test.Models
             //Assert
             Assert.Throws<LeilaoNaoPermiteLanceDoLeiloadorException>(
                 //Act
-                () => leilao.RecebeLance(new Lance(null, leiloadoPor, 300))
+                () => leilao.RecebeLance(new Lance(null, leiloadoPor, 300, leilao.Id))
             );
         }
 
@@ -177,7 +177,7 @@ namespace LeilaoFake.Me.Test.Models
             //Assert
             Assert.Throws<LeilaoLanceMenorLanceMinimoException>(
                 //Act
-                () => leilao.RecebeLance(new Lance(null, andre, 100))
+                () => leilao.RecebeLance(new Lance(null, andre, 100, leilao.Id))
             );
         }
 
@@ -205,18 +205,18 @@ namespace LeilaoFake.Me.Test.Models
             {
                 if (i % 2 == 0)
                 {
-                    leilao.RecebeLance(new Lance(null, bruno, lanceValores[i]));
+                    leilao.RecebeLance(new Lance(null, bruno, lanceValores[i], leilao.Id));
                 }
                 else
                 {
-                    leilao.RecebeLance(new Lance(null, andre, lanceValores[i]));
+                    leilao.RecebeLance(new Lance(null, andre, lanceValores[i], leilao.Id));
                 }
             }
 
             //Assert
             Assert.Throws<LeilaoLanceMenorLanceMinimoException>(
                 //Act
-                () => leilao.RecebeLance(new Lance(null, evandro, ultimoLanceValor))
+                () => leilao.RecebeLance(new Lance(null, evandro, ultimoLanceValor, leilao.Id))
             );
         }
     }

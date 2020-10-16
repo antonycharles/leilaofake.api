@@ -27,6 +27,7 @@ namespace LeilaoFake.Me.Core.Models
         public string InteressadoId{ get; private set; }
 
         public Usuario _interessado;
+
         public Usuario Interessado {
             get
             {
@@ -46,12 +47,13 @@ namespace LeilaoFake.Me.Core.Models
         public Leilao Leilao { get; private set; }
 
         public Lance() { }
-        public Lance(string id,Usuario interessado, double valor)
+        public Lance(string id,Usuario interessado, double valor, string leilaoId)
         {
             Id = (id == null ? Guid.NewGuid().ToString() : id);
             Interessado = interessado;
             Valor = valor;
             Data = DateTime.Now;
+            LeilaoId = leilaoId;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace LeilaoFake.Me.Test.Models
             //Assert
             Assert.Throws<ValorNegativoException>(
                 //Act
-                () => new Lance(null, interessado, valorNegativo)
+                () => new Lance(null, interessado, valorNegativo, null)
             );
         }
 
@@ -32,7 +32,7 @@ namespace LeilaoFake.Me.Test.Models
             //Assert
             Assert.Throws<ArgumentNullException>(
                 //Act
-                () => new Lance(null, null, valor)
+                () => new Lance(null, null, valor, null)
             );
         }
     }
