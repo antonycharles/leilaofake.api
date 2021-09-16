@@ -5,7 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using LeilaoFake.Me.Api.ErrorsApi;
-using LeilaoFake.Me.Core.Repositories;
+using LeilaoFake.Me.Infra.Data.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -55,8 +55,8 @@ namespace LeilaoFake.Me.Api
             {
                 sg.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
-                    Title = "Leilão Fake",
-                    Description = "Documentação da Api.",
+                    Title = "Leilao Fake",
+                    Description = "Documentacao da Api.",
                     Version = "1.0"
                 });
             });
@@ -76,7 +76,7 @@ namespace LeilaoFake.Me.Api
 
             app.UseSwagger();
 
-            app.UseSwaggerUI(sgu => sgu.SwaggerEndpoint("/swagger/v1/swagger.json", "Versão 1.0"));
+            app.UseSwaggerUI(sgu => sgu.SwaggerEndpoint("/swagger/v1/swagger.json", "Versao 1.0"));
 
             app.UseEndpoints(endpoints =>
             {

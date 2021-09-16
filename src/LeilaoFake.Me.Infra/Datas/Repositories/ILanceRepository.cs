@@ -1,10 +1,10 @@
-﻿using LeilaoFake.Me.Core.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using LeilaoFake.Me.Core.Models;
 
-namespace LeilaoFake.Me.Core.Repositories
+namespace LeilaoFake.Me.Infra.Data.Repositories
 {
     public interface ILanceRepository
     {

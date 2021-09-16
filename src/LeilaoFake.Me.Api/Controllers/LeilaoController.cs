@@ -1,7 +1,7 @@
 ﻿using LeilaoFake.Me.Api.ErrorsApi;
 using LeilaoFake.Me.Api.ModelsApi;
 using LeilaoFake.Me.Core.Models;
-using LeilaoFake.Me.Core.Repositories;
+using LeilaoFake.Me.Infra.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;

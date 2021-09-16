@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LeilaoFake.Me.Core\LeilaoFake.Me.Core.csproj" />
+    <ProjectReference Include="..\LeilaoFake.Me.Infra\LeilaoFake.Me.Infra.csproj" />
   </ItemGroup>
 
 

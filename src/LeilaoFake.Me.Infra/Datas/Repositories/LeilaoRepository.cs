@@ -12,7 +12,7 @@ using LeilaoFake.Me.Core.Enums;
 using System.Runtime.InteropServices;
 using Dapper.Contrib.Extensions;
 
-namespace LeilaoFake.Me.Core.Repositories
+namespace LeilaoFake.Me.Infra.Data.Repositories
 {
     public class LeilaoRepository : ILeilaoRepository
     {

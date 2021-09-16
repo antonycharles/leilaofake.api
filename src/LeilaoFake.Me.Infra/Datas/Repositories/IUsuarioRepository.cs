@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LeilaoFake.Me.Core.Repositories
+namespace LeilaoFake.Me.Infra.Data.Repositories
 {
     public interface IUsuarioRepository
     {

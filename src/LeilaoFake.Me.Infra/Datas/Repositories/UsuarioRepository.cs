@@ -6,7 +6,7 @@ using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LeilaoFake.Me.Core.Repositories
+namespace LeilaoFake.Me.Infra.Data.Repositories
 {
     public class UsuarioRepository : IUsuarioRepository
     {
