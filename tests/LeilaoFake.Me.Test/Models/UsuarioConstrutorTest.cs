@@ -9,12 +9,16 @@ namespace LeilaoFake.Me.Test.Models
     public class UsuarioConstrutorTest
     {
         [Fact]
-        public void LancaArgumentNullExceptionUsuarioIdNull()
+        public void UsuarioConstrutorSucesso()
         {
-            Assert.Throws<ArgumentNullException>(
-                //Act
-                () => new Usuario(null, "Camila Silva")
-            );
+            //Arranje
+            var nome = "789456";
+
+            //Assert
+            Usuario usuario = new Usuario(nome,"camila.silva@gmail.com");
+
+            //Act
+            Assert.Equal(usuario.Nome, nome);
         }
     }
 }

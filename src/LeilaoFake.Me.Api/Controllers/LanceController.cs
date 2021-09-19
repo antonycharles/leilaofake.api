@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LeilaoFake.Me.Api.ErrorsApi;
-using LeilaoFake.Me.Api.ModelsApi;
+using LeilaoFake.Me.Api.Responses;
+using LeilaoFake.Me.Api.Requests;
 using LeilaoFake.Me.Core.Models;
-using LeilaoFake.Me.Infra.Data.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using LeilaoFake.Me.Infra.Data.Repositories;
 
 namespace LeilaoFake.Me.Api.Controllers
 {
@@ -32,13 +32,13 @@ namespace LeilaoFake.Me.Api.Controllers
         [ProducesResponseType(typeof(Lance), 201)]
         [ProducesResponseType(typeof(ErrorResponse), 401)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> IncluirAsync([FromBody] LanceIncluirFormBody model)
+        public async Task<IActionResult> IncluirAsync([FromBody] LanceIncluirRequest model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var lance = await _lanceRepository.InsertLanceAsync(model.ToLance());
+                    var lance = await _lanceRepository.InsertAsync(model.ToLance());
                     return Created(lance.Id, lance);
                 }
 

@@ -24,7 +24,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             _leilaoRepository = leilaoRepository;
         }
 
-        public async Task<Lance> GetLanceById(string lanceId)
+        public async Task<Lance> GetById(string lanceId)
         {
             string sql = "SELECT * FROM lances WHERE Id = @Id";
 
@@ -33,7 +33,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             return resultado;
         }
 
-        public async Task<IList<Lance>> GetLancesByLeilaoId(string leilaoId)
+        public async Task<IList<Lance>> GetAllByLeilaoId(string leilaoId)
         {
             string sql = "SELECT * FROM lances WHERE LeilaoId = @LeilaoId";
 
@@ -42,17 +42,17 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             return resultado.ToList();
         }
 
-        public async Task<Lance> InsertLanceAsync(Lance lance)
+        public async Task<Lance> InsertAsync(Lance lance)
         {
 
-            var leilao = await _leilaoRepository.GetLeilaoByIdAsync(lance.LeilaoId);
+            var leilao = await _leilaoRepository.GetByIdAsync(lance.LeilaoId);
 
             if (leilao == null)
                 throw new ArgumentException("Leilão não encontrado!");
 
             leilao.RecebeLance(lance);
 
-            var usuario = await _usuarioRepository.InsertUsuarioAsync(lance.Interessado);
+            var usuario = await _usuarioRepository.InsertAsync(lance.Interessado);
 
             if (usuario.Id != lance.Interessado.Id)
                 throw new ArgumentException("Usuário informado é inválido!");

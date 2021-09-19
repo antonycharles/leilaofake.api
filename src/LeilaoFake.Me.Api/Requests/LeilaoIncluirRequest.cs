@@ -6,9 +6,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LeilaoFake.Me.Api.ModelsApi
+namespace LeilaoFake.Me.Api.Requests
 {
-    public class LeilaoIncluirFormBody
+    public class LeilaoIncluirRequest
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Título do leilão obrigatório")]
         [MaxLength(200, ErrorMessage = "Título não pode ser superior a 200 caracteres")]
@@ -16,8 +16,6 @@ namespace LeilaoFake.Me.Api.ModelsApi
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Leiloador id obrigatório")]
         public string LeiloadoPorId { get; set; }
-
-        public string LeiloadoPorNome { get; set; }
 
         public string Descricao { get; set; }
 
@@ -32,8 +30,7 @@ namespace LeilaoFake.Me.Api.ModelsApi
 
         public Leilao ToLeilao()
         {
-            var leiloador = new Usuario(this.LeiloadoPorId, this.LeiloadoPorNome);
-            return new Leilao(null, leiloador, this.Titulo, this.DataInicio, this.DataFim, this.LanceMinimo);
+            return new Leilao(LeiloadoPorId, this.Titulo, this.DataInicio, this.DataFim, this.LanceMinimo);
         }
     }
 }

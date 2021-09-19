@@ -4,29 +4,15 @@ namespace LeilaoFake.Me.Core.Models
 {
     public class Usuario
     {
-        public string _id;
-        public string Id {
-            get
-            {
-                return _id;
-            }
-
-            private set
-            {
-                if (value == null || value.Length > 20)
-                    throw new ArgumentNullException("Usuário id deve ser preenchido corretamente!");
-
-                _id = value;
-            }
-        }
-
+        public string Id { get; private set;}
         public string Nome { get; private set; }
+        public string Email { get; private set; }
 
         public Usuario() { }
-        public Usuario(string id, string nome)
+        public Usuario(string nome, string email)
         {
-            Id = id;
             Nome = nome;
+            Email = email;
         }
 
         public void Update(Usuario usuario)

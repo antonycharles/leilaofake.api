@@ -1,12 +1,12 @@
-﻿using LeilaoFake.Me.Api.ErrorsApi;
-using LeilaoFake.Me.Api.ModelsApi;
+﻿using LeilaoFake.Me.Api.Responses;
+using LeilaoFake.Me.Api.Requests;
 using LeilaoFake.Me.Core.Models;
-using LeilaoFake.Me.Infra.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LeilaoFake.Me.Infra.Data.Repositories;
 
 namespace LeilaoFake.Me.Api.Controllers
 {
@@ -30,7 +30,7 @@ namespace LeilaoFake.Me.Api.Controllers
         {
             try
             {
-                var listas = await _leilaoRepository.GetLeiloesAllByEmAndamentoAsync();
+                var listas = await _leilaoRepository.GetAllByEmAndamentoAsync();
                 return Ok(listas);
             }
             catch (Exception e)
@@ -47,7 +47,7 @@ namespace LeilaoFake.Me.Api.Controllers
         {
             try
             {
-                var leilao = await _leilaoRepository.GetLeilaoByIdAsync(leilaoId);
+                var leilao = await _leilaoRepository.GetByIdAsync(leilaoId);
 
                 if (leilao == null)
                     throw new ArgumentException("Leilão não encontrado!");
@@ -65,13 +65,13 @@ namespace LeilaoFake.Me.Api.Controllers
         [ProducesResponseType(typeof(Leilao), 201)]
         [ProducesResponseType(typeof(ErrorResponse), 401)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> IncluirAsync([FromBody] LeilaoIncluirFormBody model)
+        public async Task<IActionResult> IncluirAsync([FromBody] LeilaoIncluirRequest model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var leilao = await _leilaoRepository.InsertLeilaoAsync(model.ToLeilao());
+                    var leilao = await _leilaoRepository.InsertAsync(model.ToLeilao());
                     return Created(leilao.Id, leilao);
                 }
 
@@ -91,7 +91,7 @@ namespace LeilaoFake.Me.Api.Controllers
         {
             try
             {
-                await _leilaoRepository.UpdateCancelarLeilaoAsync(leiloadoPorId, leilaoId);
+                await _leilaoRepository.UpdateCancelarAsync(leiloadoPorId, leilaoId);
                 return Ok();
             }
             catch(Exception e)

@@ -13,12 +13,12 @@ namespace LeilaoFake.Me.Test.Models
         public void AlteraStatusLeilaoParaEmAndamento()
         {
             //Arranje
-            var leiloadoPor = new Usuario("789456", "Camila Silva");
+            var leiloadoPor = "789456";
             var titulo = "Novo Leilão";
             var inicio = DateTime.Now;
             var fim = DateTime.Now.AddDays(2);
             var lanceMinimo = 200;
-            var leilao = new Leilao(null, leiloadoPor, titulo, inicio, fim, lanceMinimo);
+            var leilao = new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo);
 
             //Act - método sob teste.
             leilao.IniciaPregao();

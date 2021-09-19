@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LeilaoFake.Me.Api.ErrorsApi
+namespace LeilaoFake.Me.Api.Responses
 {
     public class ErrorResponseFilter : IExceptionFilter
     {

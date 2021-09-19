@@ -5,15 +5,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LeilaoFake.Me.Api.ModelsApi
+namespace LeilaoFake.Me.Api.Requests
 {
-    public class LanceIncluirFormBody
+    public class LanceIncluirRequest
     {
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Interessado Id é obrigatório")]
         public string InteressadoId { get; set; }
-
-        public string InteressadoNome { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Leilão Id é obrigatório")]
         public string LeilaoId { get; set; }
@@ -23,8 +21,7 @@ namespace LeilaoFake.Me.Api.ModelsApi
 
         public Lance ToLance()
         {
-            var interredado = new Usuario(this.InteressadoId, this.InteressadoNome);
-            return new Lance(null, interredado, this.Valor, this.LeilaoId);
+            return new Lance(InteressadoId, Valor, LeilaoId);
         }
     }
 }

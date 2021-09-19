@@ -24,10 +24,23 @@ namespace LeilaoFake.Me.Core.Models
             }
         }
 
-        public string InteressadoId{ get; private set; }
+        private string _interessadoId;
 
-        public Usuario _interessado;
+        public string InteressadoId{ 
+            get
+            {
+                return _interessadoId;
+            } 
+            private set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("Interessado deve ser informado!");
 
+                _interessadoId = value;
+            }
+        }
+
+        private Usuario _interessado;
         public Usuario Interessado {
             get
             {
@@ -35,22 +48,33 @@ namespace LeilaoFake.Me.Core.Models
             }
             private set
             {
-                if (value == null)
-                    throw new ArgumentNullException("Interessado deve ser informado!");
+                
 
                 _interessado = value;
                 InteressadoId = value.Id;
             }
         }
 
-        public string LeilaoId { get; private set; }
+        private string _leilaoId;
+        public string LeilaoId { 
+            get
+            {
+                return _leilaoId;
+            } 
+            private set
+            {
+                if(value == null)
+                    throw new ArgumentNullException("O Leilão deve ser informado!");
+
+                _leilaoId = value;
+            } 
+        }
         public Leilao Leilao { get; private set; }
 
         public Lance() { }
-        public Lance(string id,Usuario interessado, double valor, string leilaoId)
+        public Lance(string interessadoId, double valor, string leilaoId)
         {
-            Id = (id == null ? Guid.NewGuid().ToString() : id);
-            Interessado = interessado;
+            InteressadoId = interessadoId;
             Valor = valor;
             Data = DateTime.Now;
             LeilaoId = leilaoId;

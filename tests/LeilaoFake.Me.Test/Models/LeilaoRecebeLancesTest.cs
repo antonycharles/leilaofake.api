@@ -18,15 +18,15 @@ namespace LeilaoFake.Me.Test.Models
         public void AceitaTodosOsLances(double[] lanceValores)
         {
             //Arranje - cenário
-            var leiloadoPor = new Usuario("789456", "Camila Silva");
-            var andre = new Usuario("1234456789", "Andre Mattos");
-            var bruno = new Usuario("789456123", "Bruno Gomes");
+            var leiloadoPor = "789456";
+            var andre = "1234456789";
+            var bruno = "789456123";
 
             var titulo = "Novo Leilão";
             var inicio = DateTime.Now.AddDays(-1);
             var fim = DateTime.Now.AddDays(2);
             var lanceMinimo = 200;
-            var leilao = new Leilao(null, leiloadoPor, titulo, inicio, fim, lanceMinimo);
+            var leilao = new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo);
 
             leilao.IniciaPregao();
 
@@ -35,11 +35,11 @@ namespace LeilaoFake.Me.Test.Models
             {
                 if (i % 2 == 0)
                 {
-                    leilao.RecebeLance(new Lance(null, bruno, lanceValores[i],leilao.Id));
+                    leilao.RecebeLance(new Lance(bruno, lanceValores[i],"456456"));
                 }
                 else
                 {
-                    leilao.RecebeLance(new Lance(null, andre, lanceValores[i], leilao.Id));
+                    leilao.RecebeLance(new Lance(andre, lanceValores[i], "456456"));
                 }
             }
 
@@ -52,25 +52,25 @@ namespace LeilaoFake.Me.Test.Models
         public void NaoAceitaProximoLanceDadoMesmoClienteExecutouUltimoLanca()
         {
             //Arranje - cenário
-            var leiloadoPor = new Usuario("789456", "Camila Silva");
-            var andre = new Usuario("1234456789", "Andre Mattos");
-            var bruno = new Usuario("789456123", "Bruno Gomes");
+            var leiloadoPor = "789456";
+            var andre = "1234456789";
+            var bruno = "789456123";
 
             var titulo = "Novo Leilão";
             var inicio = DateTime.Now.AddDays(-1);
             var fim = DateTime.Now.AddDays(2);
             var lanceMinimo = 200;
-            var leilao = new Leilao(null, leiloadoPor, titulo, inicio, fim, lanceMinimo);
+            var leilao = new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo);
 
             leilao.IniciaPregao();
 
-            leilao.RecebeLance(new Lance(null, andre, 300, leilao.Id));
-            leilao.RecebeLance(new Lance(null, bruno, 400, leilao.Id));
+            leilao.RecebeLance(new Lance(andre, 300, "456456"));
+            leilao.RecebeLance(new Lance(bruno, 400, "456456"));
 
             //Assert
             Assert.Throws<LeilaoUltimoLanceMesmoClienteException>(
                 //Act
-                () => leilao.RecebeLance(new Lance(null, bruno, 500, leilao.Id))
+                () => leilao.RecebeLance(new Lance(bruno, 500, "456456"))
             );
         }
 
@@ -78,19 +78,19 @@ namespace LeilaoFake.Me.Test.Models
         public void NaoPermiteLancesCasoLeilaoNaoEstejaEmAndamento()
         {
             //Arranje - cenário
-            var leiloadoPor = new Usuario("789456", "Camila Silva");
-            var andre = new Usuario("1234456789", "Andre Mattos");
+            var leiloadoPor = "789456";
+            var andre = "1234456789";
 
             var titulo = "Novo Leilão";
             var inicio = DateTime.Now.AddDays(-1);
             var fim = DateTime.Now.AddDays(2);
             var lanceMinimo = 200;
-            var leilao = new Leilao(null, leiloadoPor, titulo, inicio, fim, lanceMinimo);
+            var leilao = new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo);
 
             //Assert
             Assert.Throws<LeilaoNaoEstaEmAndamentoException>(
                 //Act
-                () => leilao.RecebeLance(new Lance(null, andre, 300, leilao.Id))
+                () => leilao.RecebeLance(new Lance(andre, 300, "456456"))
             );
         }
 
@@ -98,21 +98,21 @@ namespace LeilaoFake.Me.Test.Models
         public void NaoPermitirLancesAntesDoInicioDoLeilao()
         {
             //Arranje - cenário
-            var leiloadoPor = new Usuario("789456", "Camila Silva");
-            var andre = new Usuario("1234456789", "Andre Mattos");
+            var leiloadoPor = "789456";
+            var andre = "1234456789";
 
             var titulo = "Novo Leilão";
             var inicio = DateTime.Now.AddDays(1);
             var fim = DateTime.Now.AddDays(2);
             var lanceMinimo = 200;
-            var leilao = new Leilao(null, leiloadoPor, titulo, inicio, fim, lanceMinimo);
+            var leilao = new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo);
 
             leilao.IniciaPregao();
 
             //Assert
             Assert.Throws<LeilaoLanceForaDoPrazoException>(
                 //Act
-                () => leilao.RecebeLance(new Lance(null, andre, 300, leilao.Id))
+                () => leilao.RecebeLance(new Lance(andre, 300, "456456"))
             );
         }
 
@@ -120,21 +120,21 @@ namespace LeilaoFake.Me.Test.Models
         public void NaoPermitirLancesAposDataFimDoLeilao()
         {
             //Arranje - cenário
-            var leiloadoPor = new Usuario("789456", "Camila Silva");
-            var andre = new Usuario("1234456789", "Andre Mattos");
+            var leiloadoPor = "789456";
+            var andre = "1234456789";
 
             var titulo = "Novo Leilão";
             var inicio = DateTime.Now.AddDays(-4);
             var fim = DateTime.Now.AddDays(-2);
             var lanceMinimo = 200;
-            var leilao = new Leilao(null, leiloadoPor, titulo, inicio, fim, lanceMinimo);
+            var leilao = new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo);
 
             leilao.IniciaPregao();
 
             //Assert
             Assert.Throws<LeilaoLanceForaDoPrazoException>(
                 //Act
-                () => leilao.RecebeLance(new Lance(null, andre, 300, leilao.Id))
+                () => leilao.RecebeLance(new Lance(andre, 300, "456456"))
             );
         }
 
@@ -142,20 +142,20 @@ namespace LeilaoFake.Me.Test.Models
         public void NaoPermitirLancesDoLeiloador()
         {
             //Arranje - cenário
-            var leiloadoPor = new Usuario("789456", "Camila Silva");
+            var leiloadoPor = "789456";
 
             var titulo = "Novo Leilão";
             var inicio = DateTime.Now.AddDays(-1);
             var fim = DateTime.Now.AddDays(2);
             var lanceMinimo = 200;
-            var leilao = new Leilao(null, leiloadoPor, titulo, inicio, fim, lanceMinimo);
+            var leilao = new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo);
 
             leilao.IniciaPregao();
 
             //Assert
             Assert.Throws<LeilaoNaoPermiteLanceDoLeiloadorException>(
                 //Act
-                () => leilao.RecebeLance(new Lance(null, leiloadoPor, 300, leilao.Id))
+                () => leilao.RecebeLance(new Lance(leiloadoPor, 300, "456456"))
             );
         }
 
@@ -163,21 +163,21 @@ namespace LeilaoFake.Me.Test.Models
         public void NaoPermitirLancesMenoresQueValorDoLanceMinimo()
         {
             //Arranje - cenário
-            var leiloadoPor = new Usuario("789456", "Camila Silva");
-            var andre = new Usuario("1234456789", "Andre Mattos");
+            var leiloadoPor = "789456";
+            var andre = "1234456789";
 
             var titulo = "Novo Leilão";
             var inicio = DateTime.Now.AddDays(-1);
             var fim = DateTime.Now.AddDays(2);
             var lanceMinimo = 200;
-            var leilao = new Leilao(null, leiloadoPor, titulo, inicio, fim, lanceMinimo);
+            var leilao = new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo);
 
             leilao.IniciaPregao();
 
             //Assert
             Assert.Throws<LeilaoLanceMenorLanceMinimoException>(
                 //Act
-                () => leilao.RecebeLance(new Lance(null, andre, 100, leilao.Id))
+                () => leilao.RecebeLance(new Lance(andre, 100, "456456"))
             );
         }
 
@@ -188,16 +188,16 @@ namespace LeilaoFake.Me.Test.Models
         public void NaoPermiteNovoLancesMenoresQueUltimoLance(double[] lanceValores, double ultimoLanceValor)
         {
             //Arranje - cenário
-            var leiloadoPor = new Usuario("789456", "Camila Silva");
-            var andre = new Usuario("1234456789", "Andre Mattos");
-            var bruno = new Usuario("789456123", "Bruno Gomes");
-            var evandro = new Usuario("789-789-789", "Evandro Silva");
+            var leiloadoPor = "789456";
+            var andre = "1234456789";
+            var bruno = "789456123";
+            var evandro = "789-789-789";
 
             var titulo = "Novo Leilão";
             var inicio = DateTime.Now.AddDays(-1);
             var fim = DateTime.Now.AddDays(2);
             var lanceMinimo = 200;
-            var leilao = new Leilao(null, leiloadoPor, titulo, inicio, fim, lanceMinimo);
+            var leilao = new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo);
 
             leilao.IniciaPregao();
 
@@ -205,18 +205,18 @@ namespace LeilaoFake.Me.Test.Models
             {
                 if (i % 2 == 0)
                 {
-                    leilao.RecebeLance(new Lance(null, bruno, lanceValores[i], leilao.Id));
+                    leilao.RecebeLance(new Lance(bruno, lanceValores[i], "456456"));
                 }
                 else
                 {
-                    leilao.RecebeLance(new Lance(null, andre, lanceValores[i], leilao.Id));
+                    leilao.RecebeLance(new Lance(andre, lanceValores[i], "456456"));
                 }
             }
 
             //Assert
             Assert.Throws<LeilaoLanceMenorLanceMinimoException>(
                 //Act
-                () => leilao.RecebeLance(new Lance(null, evandro, ultimoLanceValor, leilao.Id))
+                () => leilao.RecebeLance(new Lance(evandro, ultimoLanceValor, "456456"))
             );
         }
     }

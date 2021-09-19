@@ -80,11 +80,9 @@ namespace LeilaoFake.Me.Core.Models
 
         public Leilao() { }
 
-        public Leilao(string id, Usuario leiloadoPor, string titulo,  DateTime inicio, DateTime fim, double lanceMinimo)
+        public Leilao(string leiloadoPorId, string titulo,  DateTime inicio, DateTime fim, double lanceMinimo)
         {
-            Id = (id == null ? Guid.NewGuid().ToString() : id);
-            LeiloadoPor = leiloadoPor;
-            LeiloadoPorId = leiloadoPor.Id;
+            LeiloadoPorId = leiloadoPorId;
             Titulo = titulo;
             DataInicio = inicio;
             DataFim = fim;

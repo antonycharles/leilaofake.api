@@ -27,7 +27,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             _usuarioRepository = usuarioRepository;
         }
 
-        public async Task<Leilao> GetLeilaoByIdAsync(string leilaoId)
+        public async Task<Leilao> GetByIdAsync(string leilaoId)
         {
             string sql = "SELECT * FROM leiloes AS LE LEFT JOIN lances AS LA ON LE.Id = LA.LeilaoId WHERE LE.id = @id";
             var result = await _dbConnection.QueryAsync<Leilao, Lance, Leilao>(sql,
@@ -44,7 +44,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             return result.FirstOrDefault();
         }
 
-        public async Task<IList<Leilao>> GetLeiloesAllByEmAndamentoAsync()
+        public async Task<IList<Leilao>> GetAllByEmAndamentoAsync()
         {
             string sql = "SELECT * FROM leiloes AS LE LEFT JOIN lances AS LA ON LE.Id = LA.LeilaoId WHERE LE.status = @status";
             var result = await _dbConnection.QueryAsync<Leilao, Lance, Leilao>(sql,
@@ -61,7 +61,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             return result.ToList();
         }
 
-        public async Task<IList<Leilao>> GetLeiloesAllByLeiloadoPorIdAsync(string leiloadoPorId)
+        public async Task<IList<Leilao>> GetAllByLeiloadoPorIdAsync(string leiloadoPorId)
         {
             string sql = "SELECT * FROM leiloes AS LE LEFT JOIN lances AS LA ON LE.Id = LA.LeilaoId WHERE LE.LeiloadoPorId = @leiloadoPorId";
             var result = await _dbConnection.QueryAsync<Leilao, Lance, Leilao>(sql,
@@ -78,9 +78,9 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             return result.ToList();
         }
 
-        public async Task<Leilao> InsertLeilaoAsync(Leilao leilao)
+        public async Task<Leilao> InsertAsync(Leilao leilao)
         {
-            var usuario = await _usuarioRepository.InsertUsuarioAsync(leilao.LeiloadoPor);
+            var usuario = await _usuarioRepository.InsertAsync(leilao.LeiloadoPor);
 
             if (usuario.Id != leilao.LeiloadoPor.Id)
                 throw new ArgumentException("Usuário informado é inválido!");
@@ -96,9 +96,9 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             return leilao;
         }
 
-        public async Task UpdateCancelarLeilaoAsync(string leiloadoPorId, string leilaoId)
+        public async Task UpdateCancelarAsync(string leiloadoPorId, string leilaoId)
         {
-            var leilao = await this.GetLeilaoByIdAsync(leilaoId);
+            var leilao = await this.GetByIdAsync(leilaoId);
 
             if (leilao.Id == null || leilao.LeiloadoPorId != leiloadoPorId)
                 throw new ArgumentException("Leilão não encontrado!");
@@ -113,9 +113,9 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
                 throw new ArgumentException("Leilão não foi alterado!");
         }
 
-        public async Task UpdateFinalizarLeilaoAsync(string leiloadoPorId, string leilaoId)
+        public async Task UpdateFinalizarAsync(string leiloadoPorId, string leilaoId)
         {
-            var leilao = await this.GetLeilaoByIdAsync(leilaoId);
+            var leilao = await this.GetByIdAsync(leilaoId);
 
             if (leilao.Id == null || leilao.LeiloadoPorId != leiloadoPorId)
                 throw new ArgumentException("Leilão não encontrado!");
