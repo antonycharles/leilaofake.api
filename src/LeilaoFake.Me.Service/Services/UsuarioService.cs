@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using LeilaoFake.Me.Core.Models;
 using LeilaoFake.Me.Infra.Data.Repositories;
 
-namespace LeilaoFake.Me.Core.Services
+namespace LeilaoFake.Me.Service.Services
 {
     public class UsuarioService : IUsuarioService
     {
@@ -37,6 +37,11 @@ namespace LeilaoFake.Me.Core.Services
 
         public async Task<Usuario> InsertAsync(Usuario usuario)
         {
+            var usuarioDb = await this.GetByEmailAsync(usuario.Email);
+
+            if(usuarioDb != null)
+                return usuarioDb;
+
             return await _usuarioRepository.InsertAsync(usuario);
         }
 

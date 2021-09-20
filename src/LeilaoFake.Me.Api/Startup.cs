@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using FluentMigrator.Runner;
 using LeilaoFake.Me.Api.Responses;
-using LeilaoFake.Me.Core.Services;
+using LeilaoFake.Me.Service.Services;
 using LeilaoFake.Me.Infra.Data.Repositories;
 using LeilaoFake.Me.Infra.Datas.Migrations;
 using Microsoft.AspNetCore.Builder;

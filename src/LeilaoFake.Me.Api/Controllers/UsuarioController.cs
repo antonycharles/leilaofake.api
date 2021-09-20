@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LeilaoFake.Me.Infra.Data.Repositories;
-using LeilaoFake.Me.Core.Services;
+using LeilaoFake.Me.Service.Services;
 
 namespace LeilaoFake.Me.Api.Controllers
 {

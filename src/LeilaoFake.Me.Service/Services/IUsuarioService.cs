@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using LeilaoFake.Me.Core.Models;
 
-namespace LeilaoFake.Me.Core.Services
+namespace LeilaoFake.Me.Service.Services
 {
     public interface IUsuarioService
     {

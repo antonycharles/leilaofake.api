@@ -12,7 +12,6 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
     public class UsuarioRepository : IUsuarioRepository
     {
         private readonly IDbConnection _dbConnection;
-        private string tableUsuarios = "\"Usuarios\"";
 
         public UsuarioRepository(IDbConnection dbConnection)
         {
@@ -21,7 +20,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 
         public async Task DeleteAsync(string usuarioId)
         {
-            string sql = $"DELETE FROM {tableUsuarios} WHERE Id = @UsuarioId";
+            string sql = $"DELETE FROM usuarios WHERE Id = @UsuarioId";
 
             var resultado = await _dbConnection.ExecuteAsync(sql, new{ UsuarioId = usuarioId });
 
@@ -32,7 +31,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 
         public async Task<IList<Usuario>> GetAllAsync(UsuarioPaginacao data)
         {
-            string sql = $"SELECT * FROM {tableUsuarios} LIMIT @ItensPorPagina OFFSET(@Pagina - 1) * @ItensPorPagina";
+            string sql = $"SELECT * FROM usuarios LIMIT @ItensPorPagina OFFSET(@Pagina - 1) * @ItensPorPagina";
 
             var resultado = await _dbConnection.QueryAsync<Usuario>(sql, new { ItensPorPagina = data.PorPagina, Pagina = data.Pagina });
 
@@ -41,7 +40,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 
         public async Task<Usuario> GetByEmailAsync(string email)
         {
-            string sql = $"SELECT * FROM {tableUsuarios} WHERE Email = @Email";
+            string sql = $"SELECT * FROM usuarios WHERE email = @Email";
 
             var resultado = await _dbConnection.QueryFirstOrDefaultAsync<Usuario>(sql, new { Email = email });
 
@@ -50,7 +49,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 
         public async Task<Usuario> GetByIdAsync(string usuarioId)
         {
-            string sql = $"SELECT * FROM {tableUsuarios} WHERE Id = @Id";
+            string sql = $"SELECT * FROM usuarios WHERE Id = @Id";
 
             var resultado = await _dbConnection.QueryFirstOrDefaultAsync<Usuario>(sql, new { Id = usuarioId });
 
@@ -59,19 +58,19 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 
         public async Task<Usuario> InsertAsync(Usuario usuario)
         {
-            string sql = $"INSERT INTO {tableUsuarios} (Id, Nome ) VALUES (@Id, @Nome)";
+            string sql = $"INSERT INTO usuarios ( nome, email ) VALUES (@Nome, @Email)  RETURNING Id";
 
-            var resultado = await _dbConnection.ExecuteAsync(sql, usuario);
+            var resultado = await _dbConnection.ExecuteScalarAsync(sql, usuario);
 
-            if (resultado == 0)
+            if (resultado == null)
                 throw new ArgumentException("Usuário não foi criado");
 
-            return usuario;
+            return await this.GetByIdAsync(resultado.ToString());
         }
 
         public async Task UpdateAsync(Usuario usuario)
         {
-            string sql = $"UPDATE {tableUsuarios} SET Nome = @Nome WHERE Id = @Id";
+            string sql = $"UPDATE usuarios SET Nome = @Nome WHERE Id = @Id";
 
             var resultado = await _dbConnection.ExecuteAsync(sql, usuario);
 
