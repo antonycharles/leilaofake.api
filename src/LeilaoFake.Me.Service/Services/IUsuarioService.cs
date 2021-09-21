@@ -8,9 +8,9 @@ namespace LeilaoFake.Me.Service.Services
     {
         Task<Usuario> GetByIdAsync(string usuarioId);
         Task<Usuario> GetByEmailAsync(string email);
-        Task<IList<Usuario>> GetAllAsync(UsuarioPaginacao data);
+        Task<UsuarioPaginacao> GetAllAsync(UsuarioPaginacao data);
         Task<Usuario> InsertAsync(Usuario usuario);
-        Task UpdateAsync(Usuario usuario);
+        Task UpdateAsync(string usuarioId, Usuario usuario);
         Task DeleteAsync(string usuarioId);
     }
 }

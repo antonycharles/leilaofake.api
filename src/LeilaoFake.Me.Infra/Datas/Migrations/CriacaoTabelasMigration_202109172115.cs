@@ -16,8 +16,10 @@ namespace LeilaoFake.Me.Infra.Datas.Migrations
         {
             Create.Table("usuarios")
                 .WithColumn("id").AsString(36).NotNullable().PrimaryKey().WithDefaultValue(RawSql.Insert("gen_random_uuid()"))
-                .WithColumn("nome").AsAnsiString(50).NotNullable()
-                .WithColumn("email").AsAnsiString(250).NotNullable();
+                .WithColumn("nome").AsAnsiString(80).NotNullable()
+                .WithColumn("email").AsAnsiString(250).Unique().NotNullable()
+                .WithColumn("criadoem").AsDateTime().NotNullable()
+                .WithColumn("alteradoem").AsDateTime().Nullable();
             
             Create.Table("leiloes")
                 .WithColumn("id").AsString(36).NotNullable().PrimaryKey().WithDefaultValue(RawSql.Insert("gen_random_uuid()"))

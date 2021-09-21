@@ -25,17 +25,24 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             var resultado = await _dbConnection.ExecuteAsync(sql, new{ UsuarioId = usuarioId });
 
             if (resultado == 0)
-                throw new ArgumentException("Usuário não foi deletado");
+                throw new Exception("Usuário não foi deletado");
 
         }
 
-        public async Task<IList<Usuario>> GetAllAsync(UsuarioPaginacao data)
+        public async Task<UsuarioPaginacao> GetAllAsync(UsuarioPaginacao data)
         {
-            string sql = $"SELECT * FROM usuarios LIMIT @ItensPorPagina OFFSET(@Pagina - 1) * @ItensPorPagina";
+            string sql = String.Format(@"
+                SELECT count(id) FROM usuarios;
+                SELECT * FROM usuarios ORDER BY {0} LIMIT @PorPagina OFFSET(@Pagina - 1) * @PorPagina;
+            ",data.Order);
 
-            var resultado = await _dbConnection.QueryAsync<Usuario>(sql, new { ItensPorPagina = data.PorPagina, Pagina = data.Pagina });
+            using (var result = await _dbConnection.QueryMultipleAsync(sql, data))
+            {
+                data.Total = result.Read<int>().FirstOrDefault();
+                data.Resultados = result.Read<Usuario>().ToList();
+            }
 
-            return resultado.ToList();
+            return data;
         }
 
         public async Task<Usuario> GetByEmailAsync(string email)
@@ -56,26 +63,26 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             return resultado;
         }
 
-        public async Task<Usuario> InsertAsync(Usuario usuario)
+        public async Task<Usuario> InsertAsync(Usuario usuario) 
         {
-            string sql = $"INSERT INTO usuarios ( nome, email ) VALUES (@Nome, @Email)  RETURNING Id";
+            string sql = $"INSERT INTO usuarios ( nome, email, criadoem ) VALUES (@Nome, @Email, @CriadoEm)  RETURNING Id";
 
             var resultado = await _dbConnection.ExecuteScalarAsync(sql, usuario);
 
             if (resultado == null)
-                throw new ArgumentException("Usuário não foi criado");
+                throw new Exception("Usuário não foi criado");
 
             return await this.GetByIdAsync(resultado.ToString());
         }
 
         public async Task UpdateAsync(Usuario usuario)
         {
-            string sql = $"UPDATE usuarios SET Nome = @Nome WHERE Id = @Id";
+            string sql = $"UPDATE usuarios SET nome = @Nome, email = @Email, alteradoem  = @AlteradoEm WHERE Id = @Id";
 
             var resultado = await _dbConnection.ExecuteAsync(sql, usuario);
 
             if (resultado == 0)
-                throw new ArgumentException("Usuário não foi alterado");
+                throw new Exception("Usuário não foi alterado");
         }
     }
 }

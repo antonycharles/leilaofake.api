@@ -15,7 +15,7 @@ Api desenvolvida em .Net Core para fazer o controle de Leilões e seus lances.
 3. CRUD Leilão ✅
 
 ### Fase 2
-1. Adicionar e-mail do usuário na hora de adicionar um lance.
+1. Adicionar e-mail do usuário  ✅.
 2. Registro de logs com NLog.
 3. Criar documentação Swagger.
 4. Publicar Api em produção com GitHub Actions.

@@ -20,7 +20,7 @@ namespace LeilaoFake.Me.Service.Services
             await _usuarioRepository.DeleteAsync(usuarioId);
         }
 
-        public async Task<IList<Usuario>> GetAllAsync(UsuarioPaginacao data)
+        public async Task<UsuarioPaginacao> GetAllAsync(UsuarioPaginacao data)
         {
             return await _usuarioRepository.GetAllAsync(data);
         }
@@ -45,14 +45,16 @@ namespace LeilaoFake.Me.Service.Services
             return await _usuarioRepository.InsertAsync(usuario);
         }
 
-        public async Task UpdateAsync(Usuario usuario)
+        public async Task UpdateAsync(string usuarioId, Usuario usuario)
         {
-            var usuarioDb = await _usuarioRepository.GetByIdAsync(usuario.Id);
+            var usuarioDb = await _usuarioRepository.GetByIdAsync(usuarioId);
 
             if (usuarioDb.Id == null)
-                throw new ArgumentException("Usuário não encontrado");
+                throw new Exception("Usuário não encontrado");
 
             usuarioDb.Update(usuario);
+
+            await _usuarioRepository.UpdateAsync(usuarioDb);
         }
     }
 }

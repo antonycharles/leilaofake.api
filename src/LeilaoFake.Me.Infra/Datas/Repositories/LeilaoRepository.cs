@@ -29,7 +29,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 
         public async Task<Leilao> GetByIdAsync(string leilaoId)
         {
-            string sql = "SELECT * FROM leiloes AS LE LEFT JOIN lances AS LA ON LE.Id = LA.LeilaoId WHERE LE.id = @id";
+            string sql = "SELECT * FROM leiloes AS LE LEFT JOIN lances AS LA ON LE.id = LA.leilaoId WHERE LE.id = @id";
             var result = await _dbConnection.QueryAsync<Leilao, Lance, Leilao>(sql,
                             (leilao, lance) =>
                             {
@@ -46,7 +46,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 
         public async Task<IList<Leilao>> GetAllByEmAndamentoAsync()
         {
-            string sql = "SELECT * FROM leiloes AS LE LEFT JOIN lances AS LA ON LE.Id = LA.LeilaoId WHERE LE.status = @status";
+            string sql = "SELECT * FROM leiloes AS LE LEFT JOIN lances AS LA ON LE.id = LA.leilaoId WHERE LE.status = @status";
             var result = await _dbConnection.QueryAsync<Leilao, Lance, Leilao>(sql,
                             (leilao, lance) =>
                             {
@@ -63,7 +63,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 
         public async Task<IList<Leilao>> GetAllByLeiloadoPorIdAsync(string leiloadoPorId)
         {
-            string sql = "SELECT * FROM leiloes AS LE LEFT JOIN lances AS LA ON LE.Id = LA.LeilaoId WHERE LE.LeiloadoPorId = @leiloadoPorId";
+            string sql = "SELECT * FROM leiloes AS LE LEFT JOIN lances AS LA ON LE.id = LA.leilaoId WHERE LE.leiloadoPorId = @leiloadoPorId";
             var result = await _dbConnection.QueryAsync<Leilao, Lance, Leilao>(sql,
                             (leilao, lance) =>
                             {
@@ -85,7 +85,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             if (usuario.Id != leilao.LeiloadoPor.Id)
                 throw new ArgumentException("Usuário informado é inválido!");
 
-            string sql = "INSERT INTO leiloes (Id, LeiloadoPorId, Titulo, Descricao, LanceMinimo, DataInicio, DataFim, status, LanceGanhadorId)" +
+            string sql = "INSERT INTO leiloes (Id, leiloadoPorId, titulo, descricao, lanceMinimo, dataInicio, dataFim, status, lanceGanhadorId)" +
                         "VALUES(@Id, @LeiloadoPorId, @Titulo, @Descricao, @LanceMinimo, @DataInicio, @DataFim, @status, @LanceGanhadorId)";
 
             var resultado = await _dbConnection.ExecuteAsync(sql, leilao);
@@ -105,7 +105,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 
             leilao.CancelarLeilao();
 
-            string sql = "UPDATE leiloes SET Status = @Status WHERE Id = @Id";
+            string sql = "UPDATE leiloes SET status = @Status WHERE Id = @Id";
 
             var resultado = await _dbConnection.ExecuteAsync(sql, leilao);
 
