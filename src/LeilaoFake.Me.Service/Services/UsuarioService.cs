@@ -42,7 +42,9 @@ namespace LeilaoFake.Me.Service.Services
             if(usuarioDb != null)
                 return usuarioDb;
 
-            return await _usuarioRepository.InsertAsync(usuario);
+            string usuarioId = await _usuarioRepository.InsertAsync(usuario);
+
+            return await _usuarioRepository.GetByIdAsync(usuarioId);
         }
 
         public async Task UpdateAsync(string usuarioId, Usuario usuario)

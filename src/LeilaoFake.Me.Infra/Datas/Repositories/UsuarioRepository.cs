@@ -20,7 +20,9 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 
         public async Task DeleteAsync(string usuarioId)
         {
-            string sql = $"DELETE FROM usuarios WHERE Id = @UsuarioId";
+            string sql = @"
+                DELETE FROM usuarios 
+                WHERE Id = @UsuarioId";
 
             var resultado = await _dbConnection.ExecuteAsync(sql, new{ UsuarioId = usuarioId });
 
@@ -32,8 +34,15 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
         public async Task<UsuarioPaginacao> GetAllAsync(UsuarioPaginacao data)
         {
             string sql = String.Format(@"
-                SELECT count(id) FROM usuarios;
-                SELECT * FROM usuarios ORDER BY {0} LIMIT @PorPagina OFFSET(@Pagina - 1) * @PorPagina;
+                SELECT 
+                    count(id) 
+                FROM usuarios;
+                SELECT 
+                    * 
+                FROM usuarios 
+                    ORDER BY {0} 
+                    LIMIT @PorPagina 
+                    OFFSET(@Pagina - 1) * @PorPagina;
             ",data.Order);
 
             using (var result = await _dbConnection.QueryMultipleAsync(sql, data))
@@ -47,7 +56,11 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 
         public async Task<Usuario> GetByEmailAsync(string email)
         {
-            string sql = $"SELECT * FROM usuarios WHERE email = @Email";
+            string sql = @"
+                SELECT 
+                    * 
+                FROM usuarios 
+                    WHERE email = @Email";
 
             var resultado = await _dbConnection.QueryFirstOrDefaultAsync<Usuario>(sql, new { Email = email });
 
@@ -56,28 +69,42 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 
         public async Task<Usuario> GetByIdAsync(string usuarioId)
         {
-            string sql = $"SELECT * FROM usuarios WHERE Id = @Id";
+            string sql = @"
+                SELECT 
+                    * 
+                FROM usuarios 
+                    WHERE Id = @Id";
 
             var resultado = await _dbConnection.QueryFirstOrDefaultAsync<Usuario>(sql, new { Id = usuarioId });
 
             return resultado;
         }
 
-        public async Task<Usuario> InsertAsync(Usuario usuario) 
+        public async Task<string> InsertAsync(Usuario usuario) 
         {
-            string sql = $"INSERT INTO usuarios ( nome, email, criadoem ) VALUES (@Nome, @Email, @CriadoEm)  RETURNING Id";
+            string sql = @"
+                INSERT INTO usuarios 
+                    ( nome, email, criadoem ) 
+                VALUES 
+                    (@Nome, @Email, @CriadoEm)  
+                RETURNING Id";
 
             var resultado = await _dbConnection.ExecuteScalarAsync(sql, usuario);
 
             if (resultado == null)
                 throw new Exception("Usuário não foi criado");
 
-            return await this.GetByIdAsync(resultado.ToString());
+            return resultado.ToString();
         }
 
         public async Task UpdateAsync(Usuario usuario)
         {
-            string sql = $"UPDATE usuarios SET nome = @Nome, email = @Email, alteradoem  = @AlteradoEm WHERE Id = @Id";
+            string sql = @"
+                UPDATE usuarios SET 
+                    nome = @Nome, 
+                    email = @Email, 
+                    alteradoem  = @AlteradoEm 
+                WHERE Id = @Id";
 
             var resultado = await _dbConnection.ExecuteAsync(sql, usuario);
 

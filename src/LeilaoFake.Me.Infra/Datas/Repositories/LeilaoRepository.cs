@@ -17,19 +17,22 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
     public class LeilaoRepository : ILeilaoRepository
     {
         private readonly IDbConnection _dbConnection;
-        private readonly IUsuarioRepository _usuarioRepository;
 
         public LeilaoRepository(
-            IDbConnection dbConnection,
-            IUsuarioRepository usuarioRepository)
+            IDbConnection dbConnection)
         {
             _dbConnection = dbConnection;
-            _usuarioRepository = usuarioRepository;
         }
 
         public async Task<Leilao> GetByIdAsync(string leilaoId)
         {
-            string sql = "SELECT * FROM leiloes AS LE LEFT JOIN lances AS LA ON LE.id = LA.leilaoId WHERE LE.id = @id";
+            string sql = @"
+                SELECT 
+                    * 
+                FROM leiloes AS LE 
+                LEFT JOIN lances AS LA ON LE.id = LA.leilaoid 
+                WHERE LE.id = @id";
+
             var result = await _dbConnection.QueryAsync<Leilao, Lance, Leilao>(sql,
                             (leilao, lance) =>
                             {
@@ -44,26 +47,52 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             return result.FirstOrDefault();
         }
 
-        public async Task<IList<Leilao>> GetAllByEmAndamentoAsync()
+        public async Task<LeilaoPaginacao> GetAllAsync(LeilaoPaginacao data)
         {
-            string sql = "SELECT * FROM leiloes AS LE LEFT JOIN lances AS LA ON LE.id = LA.leilaoId WHERE LE.status = @status";
-            var result = await _dbConnection.QueryAsync<Leilao, Lance, Leilao>(sql,
-                            (leilao, lance) =>
+            string sql = String.Format(@"
+                SELECT
+                    COUNT(id)
+                FROM leiloes
+                WHERE 
+                    (status = @Status OR @Status IS NULL) AND
+                    (titulo ILIKE @Search OR @Search IS NULL);
+                SELECT 
+                    *
+                FROM leiloes AS LE 
+                LEFT JOIN lances AS LA ON LE.id = LA.leilaoid 
+                WHERE 
+                    (LE.status = @Status OR @Status IS NULL) AND
+                    (LE.titulo ILIKE @Search OR @Search IS NULL)
+                ORDER BY {0}
+                LIMIT @PorPagina 
+                OFFSET(@Pagina - 1) * @PorPagina;
+            ",data.Order);
+
+            using (var result = await _dbConnection.QueryMultipleAsync(sql, data))
+            {
+                data.Total = result.Read<int>().FirstOrDefault();
+                data.Resultados = result.Read<Leilao, Lance, Leilao>((leilao, lance) =>
                             {
                                 Leilao leilaoEntry = leilao;
 
                                 leilaoEntry.Lances.Add(lance);
 
                                 return leilaoEntry;
-                            },
-                            new { status = StatusLeilaoEnum.EmAndamento });
+                            }).ToList();
+            }
 
-            return result.ToList();
+            return data;
         }
 
         public async Task<IList<Leilao>> GetAllByLeiloadoPorIdAsync(string leiloadoPorId)
         {
-            string sql = "SELECT * FROM leiloes AS LE LEFT JOIN lances AS LA ON LE.id = LA.leilaoId WHERE LE.leiloadoPorId = @leiloadoPorId";
+            string sql = @"
+                SELECT 
+                    * 
+                FROM leiloes AS LE 
+                LEFT JOIN lances AS LA ON LE.id = LA.leilaoid 
+                WHERE LE.leiloadoPorId = @leiloadoPorId";
+
             var result = await _dbConnection.QueryAsync<Leilao, Lance, Leilao>(sql,
                             (leilao, lance) =>
                             {
@@ -78,56 +107,56 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             return result.ToList();
         }
 
-        public async Task<Leilao> InsertAsync(Leilao leilao)
+        public async Task<string> InsertAsync(Leilao leilao)
         {
-            var usuario = await _usuarioRepository.InsertAsync(leilao.LeiloadoPor);
+            string sql = @"
+                INSERT INTO leiloes 
+                    (leiloadoporid, titulo, descricao, lanceminimo, datainicio, datafim, status, lanceganhadorid, ispublico, criadoem)
+                VALUES
+                    (@LeiloadoPorId, @Titulo, @Descricao, @LanceMinimo, @DataInicio, @DataFim, @status, @LanceGanhadorId, @IsPublico, @CriadoEm)
+                RETURNING Id";
 
-            if (usuario.Id != leilao.LeiloadoPor.Id)
-                throw new ArgumentException("Usuário informado é inválido!");
+            var leilaoId = await _dbConnection.ExecuteScalarAsync(sql, leilao);
 
-            string sql = "INSERT INTO leiloes (Id, leiloadoPorId, titulo, descricao, lanceMinimo, dataInicio, dataFim, status, lanceGanhadorId)" +
-                        "VALUES(@Id, @LeiloadoPorId, @Titulo, @Descricao, @LanceMinimo, @DataInicio, @DataFim, @status, @LanceGanhadorId)";
+            if (leilaoId == null)
+                throw new Exception("Leilão não foi criado!");
 
-            var resultado = await _dbConnection.ExecuteAsync(sql, leilao);
-
-            if (resultado == 0)
-                throw new ArgumentException("Leilão não foi criado!");
-
-            return leilao;
+            return leilaoId.ToString();
         }
 
-        public async Task UpdateCancelarAsync(string leiloadoPorId, string leilaoId)
+        public async Task UpdateAsync(Leilao leilao)
         {
-            var leilao = await this.GetByIdAsync(leilaoId);
-
-            if (leilao.Id == null || leilao.LeiloadoPorId != leiloadoPorId)
-                throw new ArgumentException("Leilão não encontrado!");
-
-            leilao.CancelarLeilao();
-
-            string sql = "UPDATE leiloes SET status = @Status WHERE Id = @Id";
+            string sql = @"
+                UPDATE leiloes SET 
+                    leiloadoporid = @LeiloadoPorId, 
+                    titulo = @Titulo, 
+                    descricao = @Descricao, 
+                    lanceminimo = @LanceMinimo, 
+                    datainicio = @DataInicio,
+                    datafim = @DataFim, 
+                    status = @Status, 
+                    lanceganhadorid = @LanceGanhadorId,
+                    ispublico = @IsPublico,
+                    alteradoem  = @AlteradoEm
+                WHERE Id = @Id";
 
             var resultado = await _dbConnection.ExecuteAsync(sql, leilao);
 
             if (resultado == 0)
-                throw new ArgumentException("Leilão não foi alterado!");
+                throw new Exception("Leilão não foi alterado!");
         }
 
-        public async Task UpdateFinalizarAsync(string leiloadoPorId, string leilaoId)
+        public async Task DeleteAsync(string leilaoId)
         {
-            var leilao = await this.GetByIdAsync(leilaoId);
+            string sql = @"
+                DELETE FROM leiloes 
+                WHERE Id = @LeilaoId";
 
-            if (leilao.Id == null || leilao.LeiloadoPorId != leiloadoPorId)
-                throw new ArgumentException("Leilão não encontrado!");
-
-            leilao.FinalizarLeilao();
-
-            string sql = "UPDATE leiloes SET Status = @Status, LanceGanhadorId = @LanceGanhadorId WHERE Id = @Id";
-
-            var resultado = await _dbConnection.ExecuteAsync(sql, leilao);
+            var resultado = await _dbConnection.ExecuteAsync(sql, new{ LeilaoId = leilaoId });
 
             if (resultado == 0)
-                throw new ArgumentException("Leilão não foi alterado!");
+                throw new Exception("Leilão não foi deletado");
+
         }
     }
 }

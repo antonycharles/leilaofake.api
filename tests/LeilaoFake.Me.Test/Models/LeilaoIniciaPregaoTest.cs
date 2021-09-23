@@ -18,7 +18,7 @@ namespace LeilaoFake.Me.Test.Models
             var inicio = DateTime.Now;
             var fim = DateTime.Now.AddDays(2);
             var lanceMinimo = 200;
-            var leilao = new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo);
+            var leilao = new Leilao(leiloadoPor, titulo, null, inicio, fim, lanceMinimo);
 
             //Act - método sob teste.
             leilao.IniciaPregao();

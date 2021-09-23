@@ -8,11 +8,11 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 {
     public interface ILeilaoRepository
     {
-        Task<IList<Leilao>> GetAllByEmAndamentoAsync();
+        Task<LeilaoPaginacao> GetAllAsync(LeilaoPaginacao leilaoPaginacao);
         Task<IList<Leilao>> GetAllByLeiloadoPorIdAsync(string leiloadoPorId);
         Task<Leilao> GetByIdAsync(string leilaoId);
-        Task<Leilao> InsertAsync(Leilao leilao);
-        Task UpdateCancelarAsync(string leiloadoPorId, string leilaoId);
-        Task UpdateFinalizarAsync(string leiloadoPorId, string leilaoId);
+        Task<string> InsertAsync(Leilao leilao);
+        Task UpdateAsync(Leilao leilao);
+        Task DeleteAsync(string leilaoId);
     }
 }

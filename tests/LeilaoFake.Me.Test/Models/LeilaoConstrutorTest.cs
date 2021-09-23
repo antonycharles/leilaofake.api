@@ -23,7 +23,7 @@ namespace LeilaoFake.Me.Test.Models
             //Assert
             Assert.Throws<ArgumentNullException>(
                 //Act
-                () => new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo)
+                () => new Leilao(leiloadoPor, titulo, null, inicio, fim, lanceMinimo)
             );
         }
 
@@ -38,7 +38,7 @@ namespace LeilaoFake.Me.Test.Models
             var lanceMinimo = 200;
 
             //Act - método sob teste.
-            var leilao = new Leilao(leiloadoPor,titulo,inicio,fim,lanceMinimo);
+            var leilao = new Leilao(leiloadoPor,titulo,null,inicio,fim,lanceMinimo);
 
             //Assert
             var valorEsperado = StatusLeilaoEnum.Espera;
@@ -59,7 +59,7 @@ namespace LeilaoFake.Me.Test.Models
             //Assert
             Assert.Throws<LeilaoDataFimMenorQueDataInicioException>(
                 //Act
-                () => new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo)
+                () => new Leilao(leiloadoPor, titulo, null, inicio, fim, lanceMinimo)
             );
         }
 
@@ -76,7 +76,7 @@ namespace LeilaoFake.Me.Test.Models
             //Assert
             Assert.Throws<ValorNegativoException>(
                 //Act
-                () => new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo)
+                () => new Leilao(leiloadoPor, titulo, null, inicio, fim, lanceMinimo)
             );
         }
     }

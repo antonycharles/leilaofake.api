@@ -1,24 +1,37 @@
+using System;
+using System.Data;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Bogus;
-using LeilaoFake.Me.Core.Exceptions;
 using LeilaoFake.Me.Core.Models;
 using LeilaoFake.Me.Infra.Data.Repositories;
-using LeilaoFake.Me.Service.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
 namespace LeilaoFake.Me.Test.Repositories
 {
-    public class UsuarioRepositoryTest
+    public class UsuarioRepositoryTest : IClassFixture<CustomWebApplicationFactory<LeilaoFake.Me.Api.Startup>>
     {
+        private readonly HttpClient _client;
+        private readonly CustomWebApplicationFactory<LeilaoFake.Me.Api.Startup> _factory;
+        private readonly IDbConnection _dbConnection;
+
+        public UsuarioRepositoryTest(CustomWebApplicationFactory<LeilaoFake.Me.Api.Startup> factory)
+        {
+            _factory = factory;
+            _client = factory.CreateClient(new WebApplicationFactoryClientOptions
+            {
+                AllowAutoRedirect = false
+            });
+            _dbConnection = factory.GetConnection();
+        }
+
         [Fact]
         public async Task IncluirNovoUsuarioComSucessoAsync()
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var usuarioRepository = GetUsuarioRepository();
+            var usuarioRepository = new UsuarioRepository(_dbConnection);
 
             //Act
             var usuario = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
@@ -32,9 +45,10 @@ namespace LeilaoFake.Me.Test.Repositories
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var usuarioRepository = GetUsuarioRepository();
+            var usuarioRepository = new UsuarioRepository(_dbConnection);
             var usuario = new Usuario(faker.Name.FullName(), faker.Internet.Email());
-            usuario = await usuarioRepository.InsertAsync(usuario);
+            string usuarioId = await usuarioRepository.InsertAsync(usuario);
+            usuario = await usuarioRepository.GetByIdAsync(usuarioId);
             var usuarioUpdata = new Usuario(faker.Name.FullName(), faker.Internet.Email());
 
             usuario.Update(usuarioUpdata);
@@ -52,14 +66,16 @@ namespace LeilaoFake.Me.Test.Repositories
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var usuarioRepository = GetUsuarioRepository();
-            var usuario = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
+            var usuarioRepository = new UsuarioRepository(_dbConnection);
+            string nome = faker.Name.FullName();
+            string email = faker.Internet.Email();
+            var usuarioId = await usuarioRepository.InsertAsync(new Usuario(nome, email));
 
             //Act
-            var usuarioDb = await usuarioRepository.GetByEmailAsync(usuario.Email);
+            var usuarioDb = await usuarioRepository.GetByEmailAsync(email);
 
             //Assert
-            Assert.Equal(usuario.Email, usuarioDb.Email);
+            Assert.Equal(email, usuarioDb.Email);
         }
 
         [Fact]
@@ -67,14 +83,14 @@ namespace LeilaoFake.Me.Test.Repositories
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var usuarioRepository = GetUsuarioRepository();
-            var usuario = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
+            var usuarioRepository = new UsuarioRepository(_dbConnection);
+            var usuarioId = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
 
             //Act
-            var usuarioDb = await usuarioRepository.GetByIdAsync(usuario.Id);
+            var usuarioDb = await usuarioRepository.GetByIdAsync(usuarioId);
 
             //Assert
-            Assert.Equal(usuario.Id, usuarioDb.Id);
+            Assert.Equal(usuarioId, usuarioDb.Id);
         }
 
         [Fact]
@@ -82,7 +98,7 @@ namespace LeilaoFake.Me.Test.Repositories
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var usuarioRepository = GetUsuarioRepository();
+            var usuarioRepository = new UsuarioRepository(_dbConnection);
             var totalUsuarios = 20;
 
             for(int i = 0; i < totalUsuarios; i++){
@@ -101,24 +117,14 @@ namespace LeilaoFake.Me.Test.Repositories
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var usuarioRepository = GetUsuarioRepository();
-            var usuario = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
+            var usuarioRepository = new UsuarioRepository(_dbConnection);
+            var usuarioId = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
 
             //Act
-            await usuarioRepository.DeleteAsync(usuario.Id);
+            await usuarioRepository.DeleteAsync(usuarioId);
 
             //Assert
-            Assert.Null(await usuarioRepository.GetByIdAsync(usuario.Id));
+            Assert.Null(await usuarioRepository.GetByIdAsync(usuarioId));
         }
-
-        UsuarioRepository _usuarioRepository = null;
-        private UsuarioRepository GetUsuarioRepository()
-        {
-            if(_usuarioRepository != null)
-                return _usuarioRepository;
-
-            return new UsuarioRepository(DatabaseTest.Start());
-        }
-
     }
 }

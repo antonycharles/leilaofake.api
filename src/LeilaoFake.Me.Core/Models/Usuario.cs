@@ -6,9 +6,8 @@ namespace LeilaoFake.Me.Core.Models
     {
         public string Id { get; private set;}
         public string Nome { get; private set; }
-
         public DateTime CriadoEm { get; private set; }
-        public DateTime? AlteradoEm { get; private set; }
+        public DateTime? AlteradoEm { get; private set; } = DateTime.UtcNow;
 
         private string _email;
         public string Email { 
@@ -37,7 +36,6 @@ namespace LeilaoFake.Me.Core.Models
         {
             this.Nome = usuario.Nome;
             this.Email = usuario.Email;
-            AlteradoEm = DateTime.UtcNow;
         }
     }
 }

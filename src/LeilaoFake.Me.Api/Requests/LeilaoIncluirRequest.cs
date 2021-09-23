@@ -30,7 +30,7 @@ namespace LeilaoFake.Me.Api.Requests
 
         public Leilao ToLeilao()
         {
-            return new Leilao(LeiloadoPorId, this.Titulo, this.DataInicio, this.DataFim, this.LanceMinimo);
+            return new Leilao(LeiloadoPorId, this.Titulo, this.Descricao, this.DataInicio, this.DataFim, this.LanceMinimo);
         }
     }
 }

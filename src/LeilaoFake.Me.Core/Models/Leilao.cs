@@ -14,6 +14,9 @@ namespace LeilaoFake.Me.Core.Models
         public string Id { get; private set; }
         public string LeiloadoPorId { get; private set; }
         public Usuario LeiloadoPor { get; private set; }
+        public bool IsPublico {get; private set;}
+        public DateTime CriadoEm { get; private set; }
+        public DateTime? AlteradoEm { get; private set; } = DateTime.UtcNow;
 
         private string _titulo;
         public string Titulo {
@@ -80,14 +83,25 @@ namespace LeilaoFake.Me.Core.Models
 
         public Leilao() { }
 
-        public Leilao(string leiloadoPorId, string titulo,  DateTime inicio, DateTime fim, double lanceMinimo)
+        public Leilao(string leiloadoPorId, string titulo, string descricao, DateTime inicio, DateTime fim, double lanceMinimo)
         {
             LeiloadoPorId = leiloadoPorId;
             Titulo = titulo;
+            Descricao = descricao;
             DataInicio = inicio;
             DataFim = fim;
             LanceMinimo = lanceMinimo;
             Status = StatusLeilaoEnum.Espera;
+            CriadoEm = DateTime.UtcNow;
+            IsPublico = false;
+        }
+
+        public void Update(string titulo = null, string descricao = null, DateTime? dataInicio = null, DateTime? dataFim = null)
+        {
+            this.Titulo = titulo;
+            this.Descricao = descricao;
+            this.DataInicio = dataInicio != null ? dataInicio.Value : this.DataInicio;
+            this.DataFim = dataFim != null ? dataFim.Value : this.DataFim;
         }
 
         public void IniciaPregao()
@@ -104,6 +118,16 @@ namespace LeilaoFake.Me.Core.Models
             {
                 this.Lances.Add(lance);
             }
+        }
+
+        public void TornarPublico()
+        {
+            IsPublico = true;
+        }
+
+        public void TornarPrivado()
+        {
+            IsPublico = false;
         }
 
         public void FinalizarLeilao()

@@ -11,7 +11,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
         Task<UsuarioPaginacao> GetAllAsync(UsuarioPaginacao data);
         Task<Usuario> GetByIdAsync(string usuarioId);
         Task<Usuario> GetByEmailAsync(string email);
-        Task<Usuario> InsertAsync(Usuario usuario);
+        Task<string> InsertAsync(Usuario usuario);
         Task DeleteAsync(string usuarioId);
         Task UpdateAsync(Usuario usuario);
     }

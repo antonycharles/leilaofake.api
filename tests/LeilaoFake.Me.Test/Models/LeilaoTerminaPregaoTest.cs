@@ -21,7 +21,7 @@ namespace LeilaoFake.Me.Test.Models
             var inicio = DateTime.Now.AddDays(-1);
             var fim = DateTime.Now.AddDays(2);
             var lanceMinimo = 200;
-            var leilao = new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo);
+            var leilao = new Leilao(leiloadoPor, titulo, null, inicio, fim, lanceMinimo);
 
             leilao.IniciaPregao();
 
@@ -47,7 +47,7 @@ namespace LeilaoFake.Me.Test.Models
             var inicio = DateTime.Now.AddDays(-1);
             var fim = DateTime.Now.AddDays(2);
             var lanceMinimo = 200;
-            var leilao = new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo);
+            var leilao = new Leilao(leiloadoPor, titulo, null, inicio, fim, lanceMinimo);
 
             // Assert
             Assert.Throws<ArgumentException>(
@@ -68,7 +68,7 @@ namespace LeilaoFake.Me.Test.Models
             var inicio = DateTime.Now.AddDays(-1);
             var fim = DateTime.Now.AddDays(2);
             var lanceMinimo = 200;
-            var leilao = new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo);
+            var leilao = new Leilao(leiloadoPor, titulo, null, inicio, fim, lanceMinimo);
 
             leilao.IniciaPregao();
 
@@ -103,7 +103,7 @@ namespace LeilaoFake.Me.Test.Models
             var inicio = DateTime.Now.AddDays(-1);
             var fim = DateTime.Now.AddDays(2);
             var lanceMinimo = 200;
-            var leilao = new Leilao(leiloadoPor, titulo, inicio, fim, lanceMinimo);
+            var leilao = new Leilao(leiloadoPor, titulo, null, inicio, fim, lanceMinimo);
 
             leilao.IniciaPregao();
 

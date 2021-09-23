@@ -30,7 +30,7 @@ namespace LeilaoFake.Me.Api.Controllers
         {
             try
             {
-                var listas = await _leilaoRepository.GetAllByEmAndamentoAsync();
+                var listas = await _leilaoRepository.GetAllAsync(new LeilaoPaginacao());
                 return Ok(listas);
             }
             catch (Exception e)
@@ -72,7 +72,7 @@ namespace LeilaoFake.Me.Api.Controllers
                 if (ModelState.IsValid)
                 {
                     var leilao = await _leilaoRepository.InsertAsync(model.ToLeilao());
-                    return Created(leilao.Id, leilao);
+                    return Created(leilao, leilao);
                 }
 
                 return BadRequest(ErrorResponse.FromModelState(ModelState));
@@ -91,7 +91,7 @@ namespace LeilaoFake.Me.Api.Controllers
         {
             try
             {
-                await _leilaoRepository.UpdateCancelarAsync(leiloadoPorId, leilaoId);
+                //await _leilaoRepository.UpdateCancelarAsync(leiloadoPorId, leilaoId);
                 return Ok();
             }
             catch(Exception e)

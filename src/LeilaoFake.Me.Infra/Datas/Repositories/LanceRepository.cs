@@ -54,8 +54,8 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 
             var usuario = await _usuarioRepository.InsertAsync(lance.Interessado);
 
-            if (usuario.Id != lance.Interessado.Id)
-                throw new ArgumentException("Usuário informado é inválido!");
+            //if (usuario.Id != lance.Interessado.Id)
+            //    throw new ArgumentException("Usuário informado é inválido!");
 
             string sql = "INSERT INTO lances (Id, LeilaoId, InteressadoId, Data, Valor ) " +
                             "VALUES (@Id, @LeilaoId, @InteressadoId, @Data, @Valor)";
