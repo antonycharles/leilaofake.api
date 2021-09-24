@@ -17,6 +17,7 @@ namespace LeilaoFake.Me.Core.Models
         public bool IsPublico {get; private set;}
         public DateTime CriadoEm { get; private set; }
         public DateTime? AlteradoEm { get; private set; } = DateTime.UtcNow;
+        public int TotalLances { get; private set; }
 
         private string _titulo;
         public string Titulo {
@@ -69,7 +70,9 @@ namespace LeilaoFake.Me.Core.Models
         }
 
         public IList<Lance> Lances { get; private set; } = new List<Lance>();
+
         public StatusLeilaoEnum Status { get; private set; }
+        
         public string StatusString
         {
             get
@@ -96,21 +99,29 @@ namespace LeilaoFake.Me.Core.Models
             IsPublico = false;
         }
 
-        public void Update(string titulo = null, string descricao = null, DateTime? dataInicio = null, DateTime? dataFim = null)
+        public bool IsDelete => StatusLeilaoEnum.Espera == this.Status;
+
+        public bool IsUpdate => StatusLeilaoEnum.Espera == this.Status;
+        public void Update(LeilaoUpdate leilaoUpdate)
         {
-            this.Titulo = titulo;
-            this.Descricao = descricao;
-            this.DataInicio = dataInicio != null ? dataInicio.Value : this.DataInicio;
-            this.DataFim = dataFim != null ? dataFim.Value : this.DataFim;
+            if(!IsUpdate)
+                throw new Exception("Não é possível alterar o leilão");
+
+            this.Titulo = leilaoUpdate.Titulo;
+            this.Descricao = leilaoUpdate.Descricao;
+            this.DataInicio = leilaoUpdate.DataInicio != null ? leilaoUpdate.DataInicio.Value : this.DataInicio;
+            this.DataFim = leilaoUpdate.DataFim != null ? leilaoUpdate.DataFim.Value : this.DataFim;
         }
 
+        public bool IsIniciaPregao => StatusLeilaoEnum.Espera == this.Status;
         public void IniciaPregao()
         {
-            if (StatusLeilaoEnum.Espera != this.Status)
-                throw new ArgumentException("Não foi possível iníciar o leilão");
+            if (!IsIniciaPregao)
+                throw new ArgumentException("Não foi possível iníciar o leilão que não esteja com status de Espera");
 
             this.Status = StatusLeilaoEnum.EmAndamento;
         }
+
 
         public void RecebeLance(Lance lance)
         {
@@ -130,9 +141,10 @@ namespace LeilaoFake.Me.Core.Models
             IsPublico = false;
         }
 
+        public bool IsFinalizarLeilao => this.Status == StatusLeilaoEnum.EmAndamento;
         public void FinalizarLeilao()
         {
-            if (this.Status != StatusLeilaoEnum.EmAndamento)
+            if (!this.IsFinalizarLeilao)
                 throw new ArgumentException("Não é possível finalizar leilão que não está em andamento");
 
             this.Status = StatusLeilaoEnum.Finalizado;
@@ -146,9 +158,11 @@ namespace LeilaoFake.Me.Core.Models
             }
         }
 
+
+        public bool IsCancelarLeilao => this.Status == StatusLeilaoEnum.Espera || this.Status == StatusLeilaoEnum.EmAndamento;
         public void CancelarLeilao()
         {
-            if (this.Status == StatusLeilaoEnum.Finalizado)
+            if (!this.IsCancelarLeilao)
                 throw new ArgumentException("Não é possível cancelar um leilão já finalizado");
 
             this.Status = StatusLeilaoEnum.Cancelado;

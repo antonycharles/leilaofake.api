@@ -19,9 +19,9 @@ namespace LeilaoFake.Me.Service.Services
             _usuarioRepository = usuarioRepository;
         }
 
-        public Task<IList<Leilao>> GetAllByEmAndamentoAsync()
+        public async Task<LeilaoPaginacao> GetAllAsync(LeilaoPaginacao data)
         {
-            throw new System.NotImplementedException();
+            return await _leilaoRepository.GetAllAsync(data);
         }
 
         public Task<IList<Leilao>> GetAllByLeiloadoPorIdAsync(string leiloadoPorId)
@@ -47,33 +47,78 @@ namespace LeilaoFake.Me.Service.Services
             return await _leilaoRepository.GetByIdAsync(leilaoId);
         }
 
-       public async Task UpdateCancelarAsync(string leiloadoPorId, string leilaoId)
+        public async Task UpdateAsync(LeilaoUpdate leilaoUpdate)
         {
-            var leilao = await _leilaoRepository.GetByIdAsync(leilaoId);
+            var leilao = await this.GetLeilaoByIdAndLeiloadoPorId(leilaoUpdate.LeilaoId, leilaoUpdate.LeiloadoPorId);
 
-            if (leilao.Id == null || leilao.LeiloadoPorId != leiloadoPorId)
-                throw new ArgumentException("Leilão não encontrado!");
+            leilao.Update(leilaoUpdate);
+
+            await _leilaoRepository.UpdateAsync(leilao);
+        }
+
+        public async Task DeleteAsync(string leiloadoPorId, string leilaoId)
+        {
+            var leilao = await this.GetLeilaoByIdAndLeiloadoPorId(leilaoId, leiloadoPorId);
+
+            if(!leilao.IsDelete)
+                throw new ArgumentException("Não é possivel deletar este leilão");
+
+            await _leilaoRepository.DeleteAsync(leilao.Id);
+        }
+
+        public async Task UpdateIniciaPregaoAsync(string leiloadoPorId, string leilaoId)
+        {
+            var leilao = await this.GetLeilaoByIdAndLeiloadoPorId(leilaoId, leiloadoPorId);
 
             leilao.CancelarLeilao();
 
-            //await _leilaoRepository.u
+            await _leilaoRepository.UpdateAsync(leilao);
+        }
+
+       public async Task UpdateCancelarAsync(string leiloadoPorId, string leilaoId)
+        {
+            var leilao = await this.GetLeilaoByIdAndLeiloadoPorId(leilaoId, leiloadoPorId);
+
+            leilao.CancelarLeilao();
+
+            await _leilaoRepository.UpdateAsync(leilao);
         }
 
         public async Task UpdateFinalizarAsync(string leiloadoPorId, string leilaoId)
         {
-            var leilao = await this.GetByIdAsync(leilaoId);
-
-            if (leilao.Id == null || leilao.LeiloadoPorId != leiloadoPorId)
-                throw new ArgumentException("Leilão não encontrado!");
+            var leilao = await this.GetLeilaoByIdAndLeiloadoPorId(leilaoId, leiloadoPorId);
 
             leilao.FinalizarLeilao();
 
-            string sql = "UPDATE leiloes SET Status = @Status, LanceGanhadorId = @LanceGanhadorId WHERE Id = @Id";
+            await _leilaoRepository.UpdateAsync(leilao);
+        }
 
-            //var resultado = await _dbConnection.ExecuteAsync(sql, leilao);
+        public async Task UpdateTornarPublicoAsync(string leiloadoPorId, string leilaoId)
+        {
+            var leilao = await this.GetLeilaoByIdAndLeiloadoPorId(leilaoId, leiloadoPorId);
 
-            //if (resultado == 0)
-                throw new ArgumentException("Leilão não foi alterado!");
+            leilao.TornarPublico();
+
+            await _leilaoRepository.UpdateAsync(leilao);
+        }
+
+        public async Task UpdateTornarPrivadoAsync(string leiloadoPorId, string leilaoId)
+        {
+            var leilao = await this.GetLeilaoByIdAndLeiloadoPorId(leilaoId, leiloadoPorId);
+
+            leilao.TornarPrivado();
+
+            await _leilaoRepository.UpdateAsync(leilao);
+        }
+
+        private async Task<Leilao> GetLeilaoByIdAndLeiloadoPorId(string leilaoId, string leiloadoPorId)
+        {
+            var leilao = await _leilaoRepository.GetByIdAsync(leilaoId);
+
+            if (leilao == null || leilao.LeiloadoPorId != leiloadoPorId)
+                throw new ArgumentException("Leilão não encontrado!");
+
+            return leilao;
         }
     }
 }

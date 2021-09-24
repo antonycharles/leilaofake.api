@@ -57,9 +57,9 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
                     (status = @Status OR @Status IS NULL) AND
                     (titulo ILIKE @Search OR @Search IS NULL);
                 SELECT 
-                    *
+                    LE.*,
+                    (SELECT COUNT(id) FROM lances WHERE leilaoid = LE.id) AS totallances
                 FROM leiloes AS LE 
-                LEFT JOIN lances AS LA ON LE.id = LA.leilaoid 
                 WHERE 
                     (LE.status = @Status OR @Status IS NULL) AND
                     (LE.titulo ILIKE @Search OR @Search IS NULL)
@@ -71,14 +71,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             using (var result = await _dbConnection.QueryMultipleAsync(sql, data))
             {
                 data.Total = result.Read<int>().FirstOrDefault();
-                data.Resultados = result.Read<Leilao, Lance, Leilao>((leilao, lance) =>
-                            {
-                                Leilao leilaoEntry = leilao;
-
-                                leilaoEntry.Lances.Add(lance);
-
-                                return leilaoEntry;
-                            }).ToList();
+                data.Resultados = result.Read<Leilao>().ToList();
             }
 
             return data;

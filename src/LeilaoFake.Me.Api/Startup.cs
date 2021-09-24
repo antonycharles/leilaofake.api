@@ -18,6 +18,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace LeilaoFake.Me.Api
 {
@@ -48,13 +51,20 @@ namespace LeilaoFake.Me.Api
                 )
                 .AddLogging(cfg => cfg.AddFluentMigratorConsole());
 
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddScoped<IUrlHelper>(x => {
+                var actionContext = x.GetRequiredService<IActionContextAccessor>().ActionContext;
+                var factory = x.GetRequiredService<IUrlHelperFactory>();
+                return factory.GetUrlHelper(actionContext);
+            });
+
             services.AddTransient<ILeilaoRepository,LeilaoRepository>();
             services.AddTransient<IUsuarioRepository, UsuarioRepository>();
             services.AddTransient<ILanceRepository, LanceRepository>();
 
             services.AddTransient<IUsuarioService,UsuarioService>();
+            services.AddTransient<ILeilaoService, LeilaoService>();
 
-            services.AddApiVersioning();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {

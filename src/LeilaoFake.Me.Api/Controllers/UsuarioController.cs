@@ -13,8 +13,7 @@ using System.Linq;
 namespace LeilaoFake.Me.Api.Controllers
 {
     [ApiController]
-    [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/[controller]")]
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;
@@ -26,7 +25,7 @@ namespace LeilaoFake.Me.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(UsuarioPaginacao), 200)]
-        [ProducesResponseType(typeof(ErrorResponse), 400)]
+        [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> GetAllAsync(int? pagina, int? porPagina, string order)
         {
@@ -45,7 +44,7 @@ namespace LeilaoFake.Me.Api.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Usuario), 200)]
-        [ProducesResponseType(typeof(ErrorResponse), 400)]
+        [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> GetIdAsync(string id)
         {
@@ -66,7 +65,7 @@ namespace LeilaoFake.Me.Api.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(Usuario), 201)]
-        [ProducesResponseType(typeof(ErrorResponse), 404)]
+        [ProducesResponseType(typeof(ErrorResponse), 400)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> IncluirAsync([FromBody] UsuarioIncluirRequest model)
         {
@@ -88,7 +87,7 @@ namespace LeilaoFake.Me.Api.Controllers
 
         [HttpPut("{id}")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(ErrorResponse), 401)]
+        [ProducesResponseType(typeof(ErrorResponse), 400)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> UpdateAsync(string id, [FromBody] UsuarioUpdateRequest model)
         {
@@ -110,7 +109,7 @@ namespace LeilaoFake.Me.Api.Controllers
 
         [HttpDelete("{id}")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(ErrorResponse), 400)]
+        [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> DeleteAsync(string id)
         {

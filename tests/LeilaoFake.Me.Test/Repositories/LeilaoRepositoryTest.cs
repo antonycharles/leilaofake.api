@@ -146,7 +146,7 @@ namespace LeilaoFake.Me.Test.Repositories
             Leilao leilao = await leilaoRepository.GetByIdAsync(leilaoId);
 
             string leilaoTituloUpdate = "Titulo leilão Update";
-            leilao.Update(titulo:leilaoTituloUpdate);
+            leilao.Update(new LeilaoUpdate(leilaoId, usuarioId, leilaoTituloUpdate, null, null, null));
             //Act
             await leilaoRepository.UpdateAsync(leilao);
 

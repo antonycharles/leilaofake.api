@@ -3,61 +3,65 @@ using LeilaoFake.Me.Api.Requests;
 using LeilaoFake.Me.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LeilaoFake.Me.Infra.Data.Repositories;
+using LeilaoFake.Me.Service.Services;
+using Microsoft.AspNetCore.Routing;
+using System.Net;
+using System.Security.Policy;
 
 namespace LeilaoFake.Me.Api.Controllers
 {
     [ApiController]
-    [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/[controller]")]
     public class LeilaoController : ControllerBase
     {
-        private readonly ILeilaoRepository _leilaoRepository;
+        private readonly ILeilaoService _leilaoService;
+        private readonly IUrlHelper _urlHelper;
 
-        public LeilaoController(ILeilaoRepository leilaoRepository)
+        public LeilaoController(ILeilaoService leilaoService, IUrlHelper urlHelper)
         {
-            _leilaoRepository = leilaoRepository;
+            _leilaoService = leilaoService;
+            _urlHelper = urlHelper;
         }
 
         [HttpGet]
         [ProducesResponseType(typeof(IList<Leilao>), 200)]
-        [ProducesResponseType(typeof(ErrorResponse), 400)]
+        [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> ListaDeLeiloesAsync()
+        public async Task<IActionResult> GetPaginacaoAsync()
         {
             try
-            {
-                var listas = await _leilaoRepository.GetAllAsync(new LeilaoPaginacao());
-                return Ok(listas);
+            {   
+                var listas = await _leilaoService.GetAllAsync(new LeilaoPaginacao());
+                
+                return Ok(new LeilaoPaginacaoResponse(listas, _urlHelper));
             }
             catch (Exception e)
             {
-                return StatusCode(400, ErrorResponse.From(e));
+                return NotFound(ErrorResponse.From(e));
             }
         }
 
         [HttpGet("{leilaoId}")]
         [ProducesResponseType(typeof(Leilao), 200)]
-        [ProducesResponseType(typeof(ErrorResponse), 400)]
+        [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> LeilaoAsync(string leilaoId)
+        public async Task<IActionResult> GetIdAsync(string leilaoId)
         {
             try
             {
-                var leilao = await _leilaoRepository.GetByIdAsync(leilaoId);
+                var leilao = await _leilaoService.GetByIdAsync(leilaoId);
 
                 if (leilao == null)
                     throw new ArgumentException("Leilão não encontrado!");
 
-                return Ok(leilao);
+                return Ok(new LeilaoResponse(leilao, _urlHelper));
 
             }
             catch(Exception e)
             {
-                return StatusCode(400, ErrorResponse.From(e));
+                return NotFound(ErrorResponse.From(e));
             }
         }
 
@@ -71,8 +75,8 @@ namespace LeilaoFake.Me.Api.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var leilao = await _leilaoRepository.InsertAsync(model.ToLeilao());
-                    return Created(leilao, leilao);
+                    var leilao = await _leilaoService.InsertAsync(model.ToLeilao());
+                    return CreatedAtAction("GetLeilaoId", new { leilaoId = leilao.Id }, new LeilaoResponse(leilao, _urlHelper));
                 }
 
                 return BadRequest(ErrorResponse.FromModelState(ModelState));
@@ -83,20 +87,128 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
-        [HttpPut("{leiloadoPorId}/{leilaoId}/cancelar")]
+        [HttpPut("{leilaoId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 400)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> CancelarLeilaoAsync(string leiloadoPorId, string leilaoId)
+        public async Task<IActionResult> UpdateAsync(string leilaoId, string leiloadoPorId, [FromBody] LeilaoUpdateRequest model)
         {
             try
             {
-                //await _leilaoRepository.UpdateCancelarAsync(leiloadoPorId, leilaoId);
-                return Ok();
+                if (ModelState.IsValid)
+                {
+                    await _leilaoService.UpdateAsync(model.ToLeilaoUpdate(leilaoId, leiloadoPorId));
+                    return Ok();
+                }
+
+                return BadRequest(ErrorResponse.FromModelState(ModelState));
             }
             catch(Exception e)
             {
                 return BadRequest(ErrorResponse.From(e));
+            }
+        }
+
+        [HttpDelete("{leilaoId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ErrorResponse), 400)]
+        [ProducesResponseType(typeof(ErrorResponse), 500)]
+        public async Task<IActionResult> DeleteAsync(string leilaoId, string leiloadoPorId = null)
+        {
+            try
+            {
+                await _leilaoService.DeleteAsync(leilaoId, leiloadoPorId);
+                return Ok();
+
+            }
+            catch(Exception e)
+            {
+                return NotFound(ErrorResponse.From(e));
+            }
+        }
+
+        [HttpPatch("{leilaoId}/iniciar_pregao")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ErrorResponse), 404)]
+        [ProducesResponseType(typeof(ErrorResponse), 500)]
+        public async Task<IActionResult> IniciarPregaoAsync(string leilaoId, string leiloadoPorId = null)
+        {
+            try
+            {
+                await _leilaoService.UpdateIniciaPregaoAsync(leiloadoPorId, leilaoId);
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return NotFound(ErrorResponse.From(e));
+            }
+        }
+
+        [HttpPatch("{leilaoId}/cancelar")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ErrorResponse), 404)]
+        [ProducesResponseType(typeof(ErrorResponse), 500)]
+        public async Task<IActionResult> CancelarAsync(string leilaoId, string leiloadoPorId = null)
+        {
+            try
+            {
+                await _leilaoService.UpdateCancelarAsync(leiloadoPorId, leilaoId);
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return NotFound(ErrorResponse.From(e));
+            }
+        }
+
+        [HttpPatch("{leilaoId}/finaliza")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ErrorResponse), 404)]
+        [ProducesResponseType(typeof(ErrorResponse), 500)]
+        public async Task<IActionResult> FinalizarAsync(string leilaoId, string leiloadoPorId = null)
+        {
+            try
+            {
+                await _leilaoService.UpdateFinalizarAsync(leiloadoPorId, leilaoId);
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return NotFound(ErrorResponse.From(e));
+            }
+        }
+
+        [HttpPatch("{leilaoId}/tornar_publico")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ErrorResponse), 404)]
+        [ProducesResponseType(typeof(ErrorResponse), 500)]
+        public async Task<IActionResult> TornarPublicoAsync(string leilaoId, string leiloadoPorId = null)
+        {
+            try
+            {
+                await _leilaoService.UpdateTornarPublicoAsync(leiloadoPorId, leilaoId);
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return NotFound(ErrorResponse.From(e));
+            }
+        }
+
+        [HttpPatch("{leilaoId}/tornar_privado")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ErrorResponse), 404)]
+        [ProducesResponseType(typeof(ErrorResponse), 500)]
+        public async Task<IActionResult> TornarPrivadoAsync(string leilaoId, string leiloadoPorId = null)
+        {
+            try
+            {
+                await _leilaoService.UpdateTornarPrivadoAsync(leiloadoPorId, leilaoId);
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return NotFound(ErrorResponse.From(e));
             }
         }
     }
