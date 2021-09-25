@@ -29,11 +29,17 @@ namespace LeilaoFake.Me.Api.Controllers
         [ProducesResponseType(typeof(IList<Leilao>), 200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> GetPaginacaoAsync()
+        public async Task<IActionResult> GetPaginacaoAsync(int? pagina, int? porPagina, string order, string search, string leiloadoPorId)
         {
             try
             {   
-                var listas = await _leilaoService.GetAllAsync(new LeilaoPaginacao());
+                var listas = await _leilaoService.GetAllAsync(new LeilaoPaginacao(
+                    porPagina:porPagina,
+                    pagina:pagina,
+                    order:order,
+                    search:search,
+                    leiloadoPorId: leiloadoPorId
+                ));
                 
                 return Ok(new LeilaoPaginacaoResponse(listas, _urlHelper));
             }
@@ -76,7 +82,7 @@ namespace LeilaoFake.Me.Api.Controllers
                 if (ModelState.IsValid)
                 {
                     var leilao = await _leilaoService.InsertAsync(model.ToLeilao());
-                    return CreatedAtAction("GetLeilaoId", new { leilaoId = leilao.Id }, new LeilaoResponse(leilao, _urlHelper));
+                    return CreatedAtAction("GetId", new { leilaoId = leilao.Id }, new LeilaoResponse(leilao, _urlHelper));
                 }
 
                 return BadRequest(ErrorResponse.FromModelState(ModelState));
@@ -117,7 +123,7 @@ namespace LeilaoFake.Me.Api.Controllers
         {
             try
             {
-                await _leilaoService.DeleteAsync(leilaoId, leiloadoPorId);
+                await _leilaoService.DeleteAsync(leiloadoPorId, leilaoId);
                 return Ok();
 
             }

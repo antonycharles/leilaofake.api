@@ -55,14 +55,20 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
                 FROM leiloes
                 WHERE 
                     (status = @Status OR @Status IS NULL) AND
-                    (titulo ILIKE @Search OR @Search IS NULL);
+                    (titulo ILIKE @SearchDb OR @SearchDb IS NULL) AND
+                    (datainicio >= now() OR @LeiloadoPorId IS NOT NULL) AND
+                    (ispublico = @IsPublico OR @LeiloadoPorId IS NOT NULL) AND
+                    (leiloadoporid = @LeiloadoPorId OR @LeiloadoPorId IS NULL);
                 SELECT 
                     LE.*,
                     (SELECT COUNT(id) FROM lances WHERE leilaoid = LE.id) AS totallances
                 FROM leiloes AS LE 
                 WHERE 
                     (LE.status = @Status OR @Status IS NULL) AND
-                    (LE.titulo ILIKE @Search OR @Search IS NULL)
+                    (LE.titulo ILIKE @SearchDb OR @SearchDb IS NULL) AND
+                    (datainicio >= now() OR @LeiloadoPorId IS NOT NULL) AND
+                    (ispublico = @IsPublico OR @LeiloadoPorId IS NOT NULL) AND
+                    (leiloadoporid = @LeiloadoPorId OR @LeiloadoPorId IS NULL)
                 ORDER BY {0}
                 LIMIT @PorPagina 
                 OFFSET(@Pagina - 1) * @PorPagina;

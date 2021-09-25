@@ -10,24 +10,20 @@ namespace LeilaoFake.Me.Api.Requests
 {
     public class LeilaoUpdateRequest
     {
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Título do leilão obrigatório")]
         [MaxLength(200, ErrorMessage = "Título não pode ser superior a 200 caracteres")]
         public string Titulo { get; set; }
 
         public string Descricao { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Lance mínimo obrigatório")]
-        public double LanceMinimo { get; set; }
+        public double? LanceMinimo { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Data início do leilão é obrigatório")]
         public DateTime? DataInicio { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Data fim do leilão é obrigatório")]
         public DateTime? DataFim { get; set; }
 
         public LeilaoUpdate ToLeilaoUpdate(string leilaoId, string leiloadoPorId)
         {
-            return new LeilaoUpdate(leilaoId, leiloadoPorId, this.Titulo, this.Descricao, this.DataInicio, this.DataFim);
+            return new LeilaoUpdate(leilaoId, leiloadoPorId, this.Titulo, this.Descricao, this.LanceMinimo, this.DataInicio, this.DataFim);
         }
     }
 }

@@ -5,12 +5,13 @@ namespace LeilaoFake.Me.Core.Models
 {
     public class LeilaoPaginacao
     {
-        public LeilaoPaginacao(int? porPagina = 10, int? pagina = 1, string order = null, string search = null)
+        public LeilaoPaginacao(int? porPagina = 10, int? pagina = 1, string order = null, string search = null, string leiloadoPorId = null)
         {
             PorPagina = porPagina != null ? porPagina.Value : 10;
             Pagina = pagina != null ? pagina.Value : 1;
             Order = order;
             Search = search;
+            LeiloadoPorId = leiloadoPorId != null ? leiloadoPorId : null;
         }
 
         private int _porPagina;
@@ -43,9 +44,12 @@ namespace LeilaoFake.Me.Core.Models
                     _order = "titulo";
             }
         }
-        public string Search { get; set;}
+        public string LeiloadoPorId { get; set; }
+        public string Search { get; set; }
+        public string SearchDb => this.Search != null ? "%" + this.Search + "%" : null;
+        public bool IsPublico => this.LeiloadoPorId == null ? true : false;
         public int Pagina { get; set; }
-        public int? Total { get; set;}
+        public int? Total { get; set; }
 
         public IList<Leilao> Resultados { get; set; }
     }

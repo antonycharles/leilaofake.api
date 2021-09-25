@@ -63,7 +63,7 @@ namespace LeilaoFake.Me.Core.Models
             private set
             {
                 if (value < this.DataInicio)
-                    throw new LeilaoDataFimMenorQueDataInicioException("Data fim informada menor que Data início!");
+                    throw new LeilaoDataFimMenorQueDataInicioException("Data Fim informada é menor que Data Início!");
 
                  _dataFim = value;
             }
@@ -109,6 +109,7 @@ namespace LeilaoFake.Me.Core.Models
 
             this.Titulo = leilaoUpdate.Titulo;
             this.Descricao = leilaoUpdate.Descricao;
+            this.LanceMinimo = leilaoUpdate.LanceMinimo != null ? leilaoUpdate.LanceMinimo.Value : this.LanceMinimo;
             this.DataInicio = leilaoUpdate.DataInicio != null ? leilaoUpdate.DataInicio.Value : this.DataInicio;
             this.DataFim = leilaoUpdate.DataFim != null ? leilaoUpdate.DataFim.Value : this.DataFim;
         }

@@ -24,9 +24,9 @@ namespace LeilaoFake.Me.Service.Services
             return await _leilaoRepository.GetAllAsync(data);
         }
 
-        public Task<IList<Leilao>> GetAllByLeiloadoPorIdAsync(string leiloadoPorId)
+        public async Task<IList<Leilao>> GetAllByLeiloadoPorIdAsync(string leiloadoPorId)
         {
-            throw new System.NotImplementedException();
+            return await _leilaoRepository.GetAllByLeiloadoPorIdAsync(leiloadoPorId);
         }
 
         public async Task<Leilao> GetByIdAsync(string leilaoId)
