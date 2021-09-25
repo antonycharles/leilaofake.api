@@ -70,7 +70,7 @@ namespace LeilaoFake.Me.Service.Services
         {
             var leilao = await this.GetLeilaoByIdAndLeiloadoPorId(leilaoId, leiloadoPorId);
 
-            leilao.CancelarLeilao();
+            leilao.IniciaPregao();
 
             await _leilaoRepository.UpdateAsync(leilao);
         }
