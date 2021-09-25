@@ -8,8 +8,8 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
 {
     public interface ILanceRepository
     {
-        Task<Lance> GetById(string lanceId);
-        Task<IList<Lance>> GetAllByLeilaoId(string leilaoId);
-        Task<Lance> InsertAsync(Lance lance);
+        Task<Lance> GetByIdAsync(string lanceId);
+        Task<IList<Lance>> GetAllByLeilaoIdAsync(string leilaoId);
+        Task<string> InsertAsync(Lance lance);
     }
 }

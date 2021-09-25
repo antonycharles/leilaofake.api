@@ -56,7 +56,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
                 WHERE 
                     (status = @Status OR @Status IS NULL) AND
                     (titulo ILIKE @SearchDb OR @SearchDb IS NULL) AND
-                    (datainicio >= now() OR @LeiloadoPorId IS NOT NULL) AND
+                    ((datainicio >= now() OR datafim >= now()) OR @LeiloadoPorId IS NOT NULL) AND
                     (ispublico = @IsPublico OR @LeiloadoPorId IS NOT NULL) AND
                     (leiloadoporid = @LeiloadoPorId OR @LeiloadoPorId IS NULL);
                 SELECT 
@@ -66,7 +66,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
                 WHERE 
                     (LE.status = @Status OR @Status IS NULL) AND
                     (LE.titulo ILIKE @SearchDb OR @SearchDb IS NULL) AND
-                    (datainicio >= now() OR @LeiloadoPorId IS NOT NULL) AND
+                    ((datainicio >= now() OR datafim >= now()) OR @LeiloadoPorId IS NOT NULL) AND
                     (ispublico = @IsPublico OR @LeiloadoPorId IS NOT NULL) AND
                     (leiloadoporid = @LeiloadoPorId OR @LeiloadoPorId IS NULL)
                 ORDER BY {0}

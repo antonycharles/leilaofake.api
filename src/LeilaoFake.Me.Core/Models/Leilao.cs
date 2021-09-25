@@ -107,8 +107,8 @@ namespace LeilaoFake.Me.Core.Models
             if(!IsUpdate)
                 throw new Exception("Não é possível alterar o leilão");
 
-            this.Titulo = leilaoUpdate.Titulo;
-            this.Descricao = leilaoUpdate.Descricao;
+            this.Titulo = leilaoUpdate.Titulo != null ? leilaoUpdate.Titulo : this.Titulo;
+            this.Descricao = leilaoUpdate.Descricao != null ? leilaoUpdate.Descricao : this.Descricao;
             this.LanceMinimo = leilaoUpdate.LanceMinimo != null ? leilaoUpdate.LanceMinimo.Value : this.LanceMinimo;
             this.DataInicio = leilaoUpdate.DataInicio != null ? leilaoUpdate.DataInicio.Value : this.DataInicio;
             this.DataFim = leilaoUpdate.DataFim != null ? leilaoUpdate.DataFim.Value : this.DataFim;
@@ -174,7 +174,7 @@ namespace LeilaoFake.Me.Core.Models
             if (lance.InteressadoId == this.LeiloadoPorId)
                 throw new LeilaoNaoPermiteLanceDoLeiloadorException("Lance inválido, interessado não pode dra lance neste item!");
 
-            if (this.DataInicio > lance.Data || this.DataFim < lance.Data)
+            if (this.DataInicio > lance.CriadoEm || this.DataFim < lance.CriadoEm)
                 throw new LeilaoLanceForaDoPrazoException("Lance fora do prazo de início ou fim!");
 
             if (this.Status != StatusLeilaoEnum.EmAndamento)
@@ -197,8 +197,9 @@ namespace LeilaoFake.Me.Core.Models
         private Lance MaiorLance()
         {
             return this.Lances
+                        .Where(x => x != null)
                         .OrderByDescending(x => x.Valor)
-                        .OrderByDescending(x => x.Data)
+                        .OrderByDescending(x => x.CriadoEm)
                         .FirstOrDefault();
         }
 

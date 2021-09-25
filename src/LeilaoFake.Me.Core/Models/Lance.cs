@@ -9,7 +9,7 @@ namespace LeilaoFake.Me.Core.Models
     public class Lance
     {
         public string Id { get; private set; }
-        public DateTime Data { get; private set; }
+        public DateTime CriadoEm { get; private set; }
 
         private double _valor;
         public double Valor {
@@ -76,7 +76,7 @@ namespace LeilaoFake.Me.Core.Models
         {
             InteressadoId = interessadoId;
             Valor = valor;
-            Data = DateTime.Now;
+            CriadoEm = DateTime.UtcNow;
             LeilaoId = leilaoId;
         }
     }

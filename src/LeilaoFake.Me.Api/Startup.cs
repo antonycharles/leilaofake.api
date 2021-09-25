@@ -64,6 +64,7 @@ namespace LeilaoFake.Me.Api
 
             services.AddTransient<IUsuarioService,UsuarioService>();
             services.AddTransient<ILeilaoService, LeilaoService>();
+            services.AddTransient<ILanceService, LanceService>();
 
 
             services.Configure<ApiBehaviorOptions>(options =>
@@ -112,4 +113,3 @@ namespace LeilaoFake.Me.Api
         }
     }
 }
-//https://renatogroffe.medium.com/net-5-dapper-exemplos-de-implementa%C3%A7%C3%A3o-c3a9ce2be802

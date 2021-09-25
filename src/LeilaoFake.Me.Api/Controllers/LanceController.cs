@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LeilaoFake.Me.Api.Responses;
 using LeilaoFake.Me.Api.Requests;
 using LeilaoFake.Me.Core.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using LeilaoFake.Me.Infra.Data.Repositories;
+using LeilaoFake.Me.Service.Services;
 
 namespace LeilaoFake.Me.Api.Controllers
 {
@@ -15,12 +13,13 @@ namespace LeilaoFake.Me.Api.Controllers
     [Route("api/[controller]")]
     public class LanceController : ControllerBase
     {
-        private readonly ILanceRepository _lanceRepository;
+        private readonly ILanceService _lanceService;
 
-        public LanceController(ILanceRepository lanceRepository)
+        public LanceController(ILanceService lanceService)
         {
-            _lanceRepository = lanceRepository;
+            _lanceService = lanceService;
         }
+
 
         /// <summary>
         /// Cadastra um novo lance para uma leilão em andamento.
@@ -29,7 +28,7 @@ namespace LeilaoFake.Me.Api.Controllers
         /// <returns>Lance criado</returns>
         [HttpPost]
         [ProducesResponseType(typeof(Lance), 201)]
-        [ProducesResponseType(typeof(ErrorResponse), 401)]
+        [ProducesResponseType(typeof(ErrorResponse), 400)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> IncluirAsync([FromBody] LanceIncluirRequest model)
         {
@@ -37,7 +36,7 @@ namespace LeilaoFake.Me.Api.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var lance = await _lanceRepository.InsertAsync(model.ToLance());
+                    var lance = await _lanceService.InsertAsync(model.ToLance());
                     return Created(lance.Id, lance);
                 }
 

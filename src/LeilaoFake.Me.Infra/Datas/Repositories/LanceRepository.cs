@@ -12,19 +12,13 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
     public class LanceRepository : ILanceRepository
     {
         private readonly IDbConnection _dbConnection;
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly ILeilaoRepository _leilaoRepository;
 
-        public LanceRepository(IDbConnection dbConnection,
-            IUsuarioRepository usuarioRepository,
-            ILeilaoRepository leilaoRepository)
+        public LanceRepository(IDbConnection dbConnection)
         {
             _dbConnection = dbConnection;
-            _usuarioRepository = usuarioRepository;
-            _leilaoRepository = leilaoRepository;
         }
 
-        public async Task<Lance> GetById(string lanceId)
+        public async Task<Lance> GetByIdAsync(string lanceId)
         {
             string sql = "SELECT * FROM lances WHERE Id = @Id";
 
@@ -33,7 +27,7 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             return resultado;
         }
 
-        public async Task<IList<Lance>> GetAllByLeilaoId(string leilaoId)
+        public async Task<IList<Lance>> GetAllByLeilaoIdAsync(string leilaoId)
         {
             string sql = "SELECT * FROM lances WHERE LeilaoId = @LeilaoId";
 
@@ -42,30 +36,21 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
             return resultado.ToList();
         }
 
-        public async Task<Lance> InsertAsync(Lance lance)
+        public async Task<string> InsertAsync(Lance lance)
         {
+            string sql = @"
+                INSERT INTO lances 
+                    (leilaoid, interessadoid, criadoem, valor)
+                VALUES 
+                    (@LeilaoId, @InteressadoId, @CriadoEm, @Valor)
+                 RETURNING Id";
 
-            var leilao = await _leilaoRepository.GetByIdAsync(lance.LeilaoId);
+            var resultado = await _dbConnection.ExecuteScalarAsync(sql, lance);
 
-            if (leilao == null)
-                throw new ArgumentException("Leilão não encontrado!");
-
-            leilao.RecebeLance(lance);
-
-            var usuario = await _usuarioRepository.InsertAsync(lance.Interessado);
-
-            //if (usuario.Id != lance.Interessado.Id)
-            //    throw new ArgumentException("Usuário informado é inválido!");
-
-            string sql = "INSERT INTO lances (Id, LeilaoId, InteressadoId, Data, Valor ) " +
-                            "VALUES (@Id, @LeilaoId, @InteressadoId, @Data, @Valor)";
-
-            var resultado = await _dbConnection.ExecuteAsync(sql, lance);
-
-            if (resultado == 0)
+            if (resultado == null)
                 throw new ArgumentException("Lance não foi cadastrado!");
 
-            return lance;
+            return resultado.ToString();
         }
     }
 }
