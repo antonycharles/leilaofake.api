@@ -169,6 +169,12 @@ namespace LeilaoFake.Me.Core.Models
             this.Status = StatusLeilaoEnum.Cancelado;
         }
 
+
+        public bool IsLanceDeveSerAceito => 
+            this.Status == StatusLeilaoEnum.EmAndamento && 
+            this.DataInicio <= DateTime.UtcNow && 
+            this.DataFim >= DateTime.UtcNow;
+
         private bool LanceDeveSerAceito(Lance lance)
         {
             if (lance.InteressadoId == this.LeiloadoPorId)

@@ -97,16 +97,23 @@ namespace LeilaoFake.Me.Api.Responses
 
             if(!leilao.IsPublico){
                 Links.Add(new LinkResponse(
-                href: _urlHelper.ActionLink("TornarPublico","Leilao", new {leilaoId = leilao.Id}),
-                rel: "tornar_publico", 
-                metodo: "PATCH"));
+                    href: _urlHelper.ActionLink("TornarPublico","Leilao", new {leilaoId = leilao.Id}),
+                    rel: "tornar_publico", 
+                    metodo: "PATCH"));
             }
 
             if(leilao.IsPublico){
                 Links.Add(new LinkResponse(
-                href: _urlHelper.ActionLink("TornarPrivado","Leilao", new {leilaoId = leilao.Id}),
-                rel: "tornar_privado", 
-                metodo: "PATCH"));
+                    href: _urlHelper.ActionLink("TornarPrivado","Leilao", new {leilaoId = leilao.Id}),
+                    rel: "tornar_privado", 
+                    metodo: "PATCH"));
+            }
+
+            if(leilao.IsLanceDeveSerAceito){
+                Links.Add(new LinkResponse(
+                    href: _urlHelper.ActionLink("Incluir","Lance", new {}),
+                    rel: "add_lance", 
+                    metodo: "POST"));
             }
         }
     }
