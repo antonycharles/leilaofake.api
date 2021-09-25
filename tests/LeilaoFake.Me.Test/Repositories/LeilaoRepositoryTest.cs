@@ -104,7 +104,7 @@ namespace LeilaoFake.Me.Test.Repositories
             }
 
             //Act
-            LeilaoPaginacao leiloes = await leilaoRepository.GetAllAsync(new LeilaoPaginacao(20,1));
+            LeilaoPaginacao leiloes = await leilaoRepository.GetAllAsync(new LeilaoPaginacao(porPagina:20, pagina:1, leiloadoPorId:usuarioId));
 
             //Assert
             Assert.Equal(leiloes.Resultados.Count, totalLeiloes);
@@ -146,7 +146,7 @@ namespace LeilaoFake.Me.Test.Repositories
             Leilao leilao = await leilaoRepository.GetByIdAsync(leilaoId);
 
             string leilaoTituloUpdate = "Titulo leilão Update";
-            leilao.Update(new LeilaoUpdate(leilaoId, usuarioId, leilaoTituloUpdate, null, null, null));
+            leilao.Update(new LeilaoUpdate(leilaoId, usuarioId, leilaoTituloUpdate,null, null, null, null));
             //Act
             await leilaoRepository.UpdateAsync(leilao);
 
