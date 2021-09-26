@@ -1,0 +1,51 @@
+version: '3'
+services:
+#    nginx:
+#        build:
+#            dockerfile: ./docker/nginx.dockerfile
+#            context: .
+#        image: antonycharles/nginx
+#        container_name: nginx
+#        ports:
+#            - "80:80"
+#        networks: 
+#           - production-network
+#        depends_on: 
+#            - "netcore1"
+#            - "netcore2"
+
+    leilaofake1:
+        build:
+            dockerfile: ./docker/leilaofake.dockerfile
+            context: .
+        image: antonycharles/leilaofake
+        container_name: leilao-fake-1
+        volumes: 
+          - /home/apps/leilaofake/logs/:/app/logs/
+        ports:
+            - "80"
+            - "443"
+        networks: 
+            - production-network
+            - postgres-network
+
+    leilaofake2:
+        build:
+            dockerfile: ./docker/leilaofake.dockerfile
+            context: .
+        image: antonycharles/leilaofake
+        container_name: leilao-fake-2
+        volumes: 
+          - /home/apps/leilaofake/logs/:/app/logs/
+        ports:
+            - "80"
+            - "443"
+        networks: 
+            - production-network
+            - postgres-network
+
+networks:
+    production-network:
+        external: true
+    postgres-network:
+        external: true
