@@ -8,6 +8,7 @@ namespace LeilaoFake.Me.Core.Models
         public string Nome { get; private set; }
         public DateTime CriadoEm { get; private set; }
         public DateTime? AlteradoEm { get; private set; } = DateTime.UtcNow;
+        public string Role { get; private set; }
 
         private string _email;
         public string Email { 

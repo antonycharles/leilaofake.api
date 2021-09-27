@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using LeilaoFake.Me.Infra.Data.Repositories;
 using LeilaoFake.Me.Service.Services;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LeilaoFake.Me.Api.Controllers
 {
@@ -24,6 +25,7 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(UsuarioPaginacao), 200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
@@ -43,6 +45,7 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(Usuario), 200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
@@ -64,6 +67,7 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(Usuario), 201)]
         [ProducesResponseType(typeof(ErrorResponse), 400)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
@@ -86,6 +90,7 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 400)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
@@ -108,6 +113,7 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]

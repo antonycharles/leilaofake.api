@@ -11,7 +11,7 @@ using Xunit;
 namespace LeilaoFake.Me.Test.Repositories
 {
     public class LanceRepositoryTest : IClassFixture<CustomWebApplicationFactory<LeilaoFake.Me.Api.Startup>>
-    {/*
+    {
         private readonly HttpClient _client;
         private readonly CustomWebApplicationFactory<LeilaoFake.Me.Api.Startup> _factory;
         private readonly IDbConnection _dbConnection;
@@ -48,5 +48,5 @@ namespace LeilaoFake.Me.Test.Repositories
             Assert.NotNull(lanceId);
         }
         
-    */}
+    }
 }

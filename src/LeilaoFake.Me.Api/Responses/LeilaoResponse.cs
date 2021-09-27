@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Security.Policy;
 using LeilaoFake.Me.Core.Models;
 using Microsoft.AspNetCore.Mvc;

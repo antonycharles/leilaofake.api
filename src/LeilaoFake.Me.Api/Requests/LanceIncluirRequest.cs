@@ -9,19 +9,15 @@ namespace LeilaoFake.Me.Api.Requests
 {
     public class LanceIncluirRequest
     {
-
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Interessado Id é obrigatório")]
-        public string InteressadoId { get; set; }
-
         [Required(AllowEmptyStrings = false, ErrorMessage = "Leilão Id é obrigatório")]
         public string LeilaoId { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Valor é obrigatório")]
         public double Valor { get; set; }
 
-        public Lance ToLance()
+        public Lance ToLance(string interessadoId)
         {
-            return new Lance(InteressadoId, Valor, LeilaoId);
+            return new Lance(interessadoId, Valor, LeilaoId);
         }
     }
 }

@@ -9,6 +9,8 @@ using LeilaoFake.Me.Service.Services;
 using Microsoft.AspNetCore.Routing;
 using System.Net;
 using System.Security.Policy;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace LeilaoFake.Me.Api.Controllers
 {
@@ -26,10 +28,11 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(IList<Leilao>), 200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> GetPaginacaoAsync(int? pagina, int? porPagina, string order, string search, string leiloadoPorId)
+        public async Task<IActionResult> GetPaginacaoAsync(int? pagina, int? porPagina, string order, string search)
         {
             try
             {   
@@ -37,8 +40,34 @@ namespace LeilaoFake.Me.Api.Controllers
                     porPagina:porPagina,
                     pagina:pagina,
                     order:order,
+                    search:search
+                ));
+
+                
+                return Ok(new LeilaoPaginacaoResponse(listas, _urlHelper));
+            }
+            catch (Exception e)
+            {
+                return NotFound(ErrorResponse.From(e));
+            }
+        }
+
+        [HttpGet("meus-leiloes")]
+        [Authorize(Roles = "default,admin")]
+        [ProducesResponseType(typeof(IList<Leilao>), 200)]
+        [ProducesResponseType(typeof(ErrorResponse), 404)]
+        [ProducesResponseType(typeof(ErrorResponse), 500)]
+        public async Task<IActionResult> GetAllMeusLeiloesAsync(int? pagina, int? porPagina, string order, string search)
+        {
+            try
+            {   
+                var usuarioAutenticado = new UsuarioAutenticado(User);
+                var listas = await _leilaoService.GetAllAsync(new LeilaoPaginacao(
+                    porPagina:porPagina,
+                    pagina:pagina,
+                    order:order,
                     search:search,
-                    leiloadoPorId: leiloadoPorId
+                    leiloadoPorId: usuarioAutenticado.Id
                 ));
                 
                 return Ok(new LeilaoPaginacaoResponse(listas, _urlHelper));
@@ -50,6 +79,7 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpGet("{leilaoId}")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(Leilao), 200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
@@ -72,6 +102,7 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "default,admin")]
         [ProducesResponseType(typeof(Leilao), 201)]
         [ProducesResponseType(typeof(ErrorResponse), 401)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
@@ -81,7 +112,8 @@ namespace LeilaoFake.Me.Api.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var leilao = await _leilaoService.InsertAsync(model.ToLeilao());
+                    var usuarioAutenticado = new UsuarioAutenticado(User);
+                    var leilao = await _leilaoService.InsertAsync(model.ToLeilao(usuarioAutenticado.Id));
                     return CreatedAtAction("GetId", new { leilaoId = leilao.Id }, new LeilaoResponse(leilao, _urlHelper));
                 }
 
@@ -94,16 +126,18 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpPut("{leilaoId}")]
+        [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 400)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> UpdateAsync(string leilaoId, string leiloadoPorId, [FromBody] LeilaoUpdateRequest model)
+        public async Task<IActionResult> UpdateAsync(string leilaoId, [FromBody] LeilaoUpdateRequest model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await _leilaoService.UpdateAsync(model.ToLeilaoUpdate(leilaoId, leiloadoPorId));
+                    var usuarioAutenticado = new UsuarioAutenticado(User);
+                    await _leilaoService.UpdateAsync(model.ToLeilaoUpdate(leilaoId, usuarioAutenticado.Id));
                     return Ok();
                 }
 
@@ -116,14 +150,16 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpDelete("{leilaoId}")]
+        [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 400)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> DeleteAsync(string leilaoId, string leiloadoPorId = null)
+        public async Task<IActionResult> DeleteAsync(string leilaoId)
         {
             try
             {
-                await _leilaoService.DeleteAsync(leiloadoPorId, leilaoId);
+                var usuarioAutenticado = new UsuarioAutenticado(User);
+                await _leilaoService.DeleteAsync(usuarioAutenticado.Id, leilaoId);
                 return Ok();
 
             }
@@ -134,14 +170,16 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpPatch("{leilaoId}/iniciar_pregao")]
+        [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> IniciarPregaoAsync(string leilaoId, string leiloadoPorId = null)
+        public async Task<IActionResult> IniciarPregaoAsync(string leilaoId)
         {
             try
             {
-                await _leilaoService.UpdateIniciaPregaoAsync(leiloadoPorId, leilaoId);
+                var usuarioAutenticado = new UsuarioAutenticado(User);
+                await _leilaoService.UpdateIniciaPregaoAsync(usuarioAutenticado.Id, leilaoId);
                 return Ok();
             }
             catch(Exception e)
@@ -151,14 +189,16 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpPatch("{leilaoId}/cancelar")]
+        [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> CancelarAsync(string leilaoId, string leiloadoPorId = null)
+        public async Task<IActionResult> CancelarAsync(string leilaoId)
         {
             try
             {
-                await _leilaoService.UpdateCancelarAsync(leiloadoPorId, leilaoId);
+                var usuarioAutenticado = new UsuarioAutenticado(User);
+                await _leilaoService.UpdateCancelarAsync(usuarioAutenticado.Id, leilaoId);
                 return Ok();
             }
             catch(Exception e)
@@ -168,14 +208,16 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpPatch("{leilaoId}/finaliza")]
+        [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> FinalizarAsync(string leilaoId, string leiloadoPorId = null)
+        public async Task<IActionResult> FinalizarAsync(string leilaoId)
         {
             try
             {
-                await _leilaoService.UpdateFinalizarAsync(leiloadoPorId, leilaoId);
+                var usuarioAutenticado = new UsuarioAutenticado(User);
+                await _leilaoService.UpdateFinalizarAsync(usuarioAutenticado.Id, leilaoId);
                 return Ok();
             }
             catch(Exception e)
@@ -185,14 +227,16 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpPatch("{leilaoId}/tornar_publico")]
+        [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> TornarPublicoAsync(string leilaoId, string leiloadoPorId = null)
+        public async Task<IActionResult> TornarPublicoAsync(string leilaoId)
         {
             try
             {
-                await _leilaoService.UpdateTornarPublicoAsync(leiloadoPorId, leilaoId);
+                var usuarioAutenticado = new UsuarioAutenticado(User);
+                await _leilaoService.UpdateTornarPublicoAsync(usuarioAutenticado.Id, leilaoId);
                 return Ok();
             }
             catch(Exception e)
@@ -202,14 +246,16 @@ namespace LeilaoFake.Me.Api.Controllers
         }
 
         [HttpPatch("{leilaoId}/tornar_privado")]
+        [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> TornarPrivadoAsync(string leilaoId, string leiloadoPorId = null)
+        public async Task<IActionResult> TornarPrivadoAsync(string leilaoId)
         {
             try
             {
-                await _leilaoService.UpdateTornarPrivadoAsync(leiloadoPorId, leilaoId);
+                var usuarioAutenticado = new UsuarioAutenticado(User);
+                await _leilaoService.UpdateTornarPrivadoAsync(usuarioAutenticado.Id, leilaoId);
                 return Ok();
             }
             catch(Exception e)

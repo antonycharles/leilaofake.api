@@ -21,6 +21,11 @@ using Npgsql;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using LeilaoFake.Me.Api.Token;
+using Microsoft.Extensions.Options;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace LeilaoFake.Me.Api
 {
@@ -42,6 +47,36 @@ namespace LeilaoFake.Me.Api
             // Inject IDbConnection, with implementation from SqlConnection class.
             services.AddTransient<IDbConnection>((sp) => new NpgsqlConnection(dbConnectionString));
 
+
+            var tokenConfigurations = new TokenConfigurations();
+
+            new ConfigureFromConfigurationOptions<TokenConfigurations>(
+                Configuration.GetSection("TokenConfigurations"))
+                    .Configure(tokenConfigurations);
+                    
+            services.AddSingleton(tokenConfigurations);
+
+
+            var key = Encoding.ASCII.GetBytes(tokenConfigurations.Secret);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidIssuer = tokenConfigurations.Issuer,
+                    ValidAudience = tokenConfigurations.Audience
+                };
+            });
+
+            services.AddTransient<ITokenService,TokenService>();
 
             services.AddFluentMigratorCore()
                 .ConfigureRunner(cfg => cfg
@@ -100,6 +135,7 @@ namespace LeilaoFake.Me.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseSwagger();

@@ -6,6 +6,8 @@ using LeilaoFake.Me.Api.Requests;
 using LeilaoFake.Me.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using LeilaoFake.Me.Service.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace LeilaoFake.Me.Api.Controllers
 {
@@ -27,6 +29,7 @@ namespace LeilaoFake.Me.Api.Controllers
         /// <param name="model"> FromBody com as informações sober o lance</param>
         /// <returns>Lance criado</returns>
         [HttpPost]
+        [Authorize(Roles = "default,admin")]
         [ProducesResponseType(typeof(Lance), 201)]
         [ProducesResponseType(typeof(ErrorResponse), 400)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
@@ -36,7 +39,8 @@ namespace LeilaoFake.Me.Api.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var lance = await _lanceService.InsertAsync(model.ToLance());
+                    var usuarioAutenticado = new UsuarioAutenticado(User);
+                    var lance = await _lanceService.InsertAsync(model.ToLance(usuarioAutenticado.Id));
                     return Created(lance.Id, lance);
                 }
 
