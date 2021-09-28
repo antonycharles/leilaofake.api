@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using LeilaoFake.Me.Core.Models;
 using LeilaoFake.Me.Infra.Data.Repositories;
+using Microsoft.Extensions.Logging;
 
 namespace LeilaoFake.Me.Service.Services
 {
@@ -10,17 +12,21 @@ namespace LeilaoFake.Me.Service.Services
     {
         private readonly ILeilaoRepository _leilaoRepository;
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly ILogger _logger;
 
         public LeilaoService(
             ILeilaoRepository leilaoRepository,
-            IUsuarioRepository usuarioRepository)
+            IUsuarioRepository usuarioRepository,
+            ILogger<LeilaoService> logger)
         {
             _leilaoRepository = leilaoRepository;
             _usuarioRepository = usuarioRepository;
+            _logger = logger;
         }
 
         public async Task<LeilaoPaginacao> GetAllAsync(LeilaoPaginacao data)
         {
+            _logger.LogInformation("Dados: " + JsonSerializer.Serialize(data));
             return await _leilaoRepository.GetAllAsync(data);
         }
 

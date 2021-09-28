@@ -11,6 +11,8 @@ namespace LeilaoFake.Me.Api.Responses
     public class LeilaoResponse
     {
         private readonly IUrlHelper _urlHelper;
+        private readonly UsuarioAutenticado _usuarioAutenticado;
+        private readonly Leilao _leilao;
 
         public string Id { get; private set; }
         public string LeiloadoPorId { get; private set; }
@@ -30,9 +32,11 @@ namespace LeilaoFake.Me.Api.Responses
         public string Status { get; private set; }
         public IList<LinkResponse> Links { get; private set; } = new List<LinkResponse>();
 
-        public LeilaoResponse(Leilao leilao, IUrlHelper urlHelper)
+        public LeilaoResponse(Leilao leilao, IUrlHelper urlHelper, UsuarioAutenticado usuarioAutenticado)
         {
             _urlHelper = urlHelper;
+            _usuarioAutenticado = usuarioAutenticado;
+            _leilao = leilao;
 
             Id = leilao.Id;
             LeiloadoPorId = leilao.LeiloadoPorId;
@@ -50,70 +54,113 @@ namespace LeilaoFake.Me.Api.Responses
             LanceGanhadorId = leilao.LanceGanhadorId;
             LanceGanhador = leilao.LanceGanhador;
             Status = leilao.StatusString;
-
-            this.CreateLinks(leilao);
         }
 
-        public void CreateLinks(Leilao leilao)
+        public void AddAllLinks()
+        {
+            AddLinkLeilaoId();
+            AddLinkUpdate();
+            AddLinkDelete();
+            AddLinkIniciarPregao();
+            AddLinkCancelar();
+            AddLinkFinalizar();
+            AddLinkTornarPublico();
+            AddLinkTornarPrivado();
+            AddLinkIncluirLance();
+        }
+        
+        public void AddLinkLeilaoId()
         {
             Links.Add(new LinkResponse(
-                href: _urlHelper.ActionLink("GetId","Leilao", new {leilaoId = leilao.Id}),
-                rel: "self", 
+                href: _urlHelper.ActionLink("GetId", "Leilao", new { leilaoId = _leilao.Id }),
+                rel: "self",
                 metodo: "GET"));
+        }
 
-            if(leilao.IsUpdate){
+        public void AddLinkUpdate()
+        {
+            if (_leilao.IsUpdate && _usuarioAutenticado.Id == _leilao.LeiloadoPorId)
+            {
                 Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("Update","Leilao", new {leilaoId = leilao.Id}),
-                    rel: "update", 
+                    href: _urlHelper.ActionLink("Update", "Leilao", new { leilaoId = _leilao.Id }),
+                    rel: "update",
                     metodo: "PUT"));
             }
+        }
 
-            if(leilao.IsDelete){
+        public void AddLinkDelete()
+        {
+            if (_leilao.IsDelete && _usuarioAutenticado.Id == _leilao.LeiloadoPorId)
+            {
                 Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("Delete","Leilao", new {leilaoId = leilao.Id}),
-                    rel: "delete", 
+                    href: _urlHelper.ActionLink("Delete", "Leilao", new { leilaoId = _leilao.Id }),
+                    rel: "delete",
                     metodo: "DELETE"));
             }
+        }
 
-            if(leilao.IsIniciaPregao){
+        public void AddLinkIniciarPregao()
+        {
+            if (_leilao.IsIniciaPregao && _usuarioAutenticado.Id == _leilao.LeiloadoPorId)
+            {
                 Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("IniciarPregao","Leilao", new {leilaoId = leilao.Id}),
-                    rel: "iniciar_pregao", 
+                    href: _urlHelper.ActionLink("IniciarPregao", "Leilao", new { leilaoId = _leilao.Id }),
+                    rel: "iniciar_pregao",
                     metodo: "PATCH"));
             }
+        }
 
-            if(leilao.IsCancelarLeilao){
+        public void AddLinkCancelar()
+        {
+            if (_leilao.IsCancelarLeilao && _usuarioAutenticado.Id == _leilao.LeiloadoPorId)
+            {
                 Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("Cancelar","Leilao", new {leilaoId = leilao.Id}),
-                    rel: "cancelar", 
+                    href: _urlHelper.ActionLink("Cancelar", "Leilao", new { leilaoId = _leilao.Id }),
+                    rel: "cancelar",
                     metodo: "PATCH"));
             }
+        }
 
-            if(leilao.IsFinalizarLeilao){
+        public void AddLinkFinalizar()
+        {
+            if (_leilao.IsFinalizarLeilao && _usuarioAutenticado.Id == _leilao.LeiloadoPorId)
+            {
                 Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("Finalizar","Leilao", new {leilaoId = leilao.Id}),
-                    rel: "finalizar", 
+                    href: _urlHelper.ActionLink("Finalizar", "Leilao", new { leilaoId = _leilao.Id }),
+                    rel: "finalizar",
                     metodo: "PATCH"));
             }
+        }
 
-            if(!leilao.IsPublico){
+        public void AddLinkTornarPublico()
+        {
+            if (!_leilao.IsPublico && _usuarioAutenticado.Id == _leilao.LeiloadoPorId)
+            {
                 Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("TornarPublico","Leilao", new {leilaoId = leilao.Id}),
-                    rel: "tornar_publico", 
+                    href: _urlHelper.ActionLink("TornarPublico", "Leilao", new { leilaoId = _leilao.Id }),
+                    rel: "tornar_publico",
                     metodo: "PATCH"));
             }
+        }
 
-            if(leilao.IsPublico){
+        public void AddLinkTornarPrivado()
+        {
+            if (_leilao.IsPublico && _usuarioAutenticado.Id == _leilao.LeiloadoPorId)
+            {
                 Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("TornarPrivado","Leilao", new {leilaoId = leilao.Id}),
-                    rel: "tornar_privado", 
+                    href: _urlHelper.ActionLink("TornarPrivado", "Leilao", new { leilaoId = _leilao.Id }),
+                    rel: "tornar_privado",
                     metodo: "PATCH"));
             }
+        }
 
-            if(leilao.IsLanceDeveSerAceito){
+        public void AddLinkIncluirLance()
+        {
+            if (_leilao.IsLanceDeveSerAceito)
+            {
                 Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("Incluir","Lance", new {}),
-                    rel: "add_lance", 
+                    href: _urlHelper.ActionLink("Incluir", "Lance", new { }),
+                    rel: "add_lance",
                     metodo: "POST"));
             }
         }

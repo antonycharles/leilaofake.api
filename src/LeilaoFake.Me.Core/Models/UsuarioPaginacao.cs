@@ -20,7 +20,7 @@ namespace LeilaoFake.Me.Core.Models
             } 
             set
             {
-                if(value < 50)
+                if(value < 50 && value > 0)
                     _porPagina = value;
                 else
                     _porPagina = 50;

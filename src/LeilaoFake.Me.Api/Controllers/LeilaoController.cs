@@ -11,6 +11,7 @@ using System.Net;
 using System.Security.Policy;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.Extensions.Logging;
 
 namespace LeilaoFake.Me.Api.Controllers
 {
@@ -18,13 +19,15 @@ namespace LeilaoFake.Me.Api.Controllers
     [Route("api/[controller]")]
     public class LeilaoController : ControllerBase
     {
+        private readonly ILogger _logger;
         private readonly ILeilaoService _leilaoService;
         private readonly IUrlHelper _urlHelper;
 
-        public LeilaoController(ILeilaoService leilaoService, IUrlHelper urlHelper)
+        public LeilaoController(ILeilaoService leilaoService, IUrlHelper urlHelper, ILogger<LeilaoController> logger)
         {
             _leilaoService = leilaoService;
             _urlHelper = urlHelper;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -36,18 +39,25 @@ namespace LeilaoFake.Me.Api.Controllers
         {
             try
             {   
+                _logger.LogInformation("Inicio {0}", nameof(GetPaginacaoAsync));
+                var usuarioAutenticado = new UsuarioAutenticado(User);
                 var listas = await _leilaoService.GetAllAsync(new LeilaoPaginacao(
                     porPagina:porPagina,
                     pagina:pagina,
                     order:order,
                     search:search
                 ));
-
                 
-                return Ok(new LeilaoPaginacaoResponse(listas, _urlHelper));
+                var leilaoPaginacaoResponse = new LeilaoPaginacaoResponse(listas, _urlHelper, usuarioAutenticado);
+                leilaoPaginacaoResponse.AddLinkMeusLeiloes();
+                leilaoPaginacaoResponse.AddLinkPaginaAnterior();
+                leilaoPaginacaoResponse.AddLinkProximaPagina();
+
+                return Ok(leilaoPaginacaoResponse);
             }
             catch (Exception e)
             {
+                _logger.LogError(e,"Erro"  + nameof(GetPaginacaoAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -69,11 +79,17 @@ namespace LeilaoFake.Me.Api.Controllers
                     search:search,
                     leiloadoPorId: usuarioAutenticado.Id
                 ));
+
+                var leilaoPaginacaoResponse = new LeilaoPaginacaoResponse(listas, _urlHelper, usuarioAutenticado);
+                leilaoPaginacaoResponse.AddLinkTodosLeiloes();
+                leilaoPaginacaoResponse.AddLinkPaginaAnteriorUsuarioLogado();
+                leilaoPaginacaoResponse.AddLinkProximaPaginaUsuarioLogado();
                 
-                return Ok(new LeilaoPaginacaoResponse(listas, _urlHelper));
+                return Ok(leilaoPaginacaoResponse);
             }
             catch (Exception e)
             {
+                _logger.LogError(e,"Erro"  + nameof(GetAllMeusLeiloesAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -87,16 +103,21 @@ namespace LeilaoFake.Me.Api.Controllers
         {
             try
             {
+                var usuarioAutenticado = new UsuarioAutenticado(User);
                 var leilao = await _leilaoService.GetByIdAsync(leilaoId);
 
                 if (leilao == null)
                     throw new ArgumentException("Leilão não encontrado!");
 
-                return Ok(new LeilaoResponse(leilao, _urlHelper));
+                var leilaoResponse = new LeilaoResponse(leilao, _urlHelper, usuarioAutenticado);
+                leilaoResponse.AddAllLinks();
+
+                return Ok(leilaoResponse);
 
             }
             catch(Exception e)
             {
+                _logger.LogError(e,"Erro"  + nameof(GetIdAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -114,13 +135,14 @@ namespace LeilaoFake.Me.Api.Controllers
                 {
                     var usuarioAutenticado = new UsuarioAutenticado(User);
                     var leilao = await _leilaoService.InsertAsync(model.ToLeilao(usuarioAutenticado.Id));
-                    return CreatedAtAction("GetId", new { leilaoId = leilao.Id }, new LeilaoResponse(leilao, _urlHelper));
+                    return CreatedAtAction("GetId", new { leilaoId = leilao.Id }, new LeilaoResponse(leilao, _urlHelper, usuarioAutenticado));
                 }
 
                 return BadRequest(ErrorResponse.FromModelState(ModelState));
             }
             catch(Exception e)
             {
+                _logger.LogError(e,"Erro"  + nameof(IncluirAsync));
                 return BadRequest(ErrorResponse.From(e));
             }
         }
@@ -145,6 +167,7 @@ namespace LeilaoFake.Me.Api.Controllers
             }
             catch(Exception e)
             {
+                _logger.LogError(e,"Erro"  + nameof(UpdateAsync));
                 return BadRequest(ErrorResponse.From(e));
             }
         }
@@ -165,6 +188,7 @@ namespace LeilaoFake.Me.Api.Controllers
             }
             catch(Exception e)
             {
+                _logger.LogError(e,"Erro"  + nameof(DeleteAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -184,6 +208,7 @@ namespace LeilaoFake.Me.Api.Controllers
             }
             catch(Exception e)
             {
+                _logger.LogError(e,"Erro"  + nameof(IniciarPregaoAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -203,6 +228,7 @@ namespace LeilaoFake.Me.Api.Controllers
             }
             catch(Exception e)
             {
+                _logger.LogError(e,"Erro"  + nameof(CancelarAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -222,6 +248,7 @@ namespace LeilaoFake.Me.Api.Controllers
             }
             catch(Exception e)
             {
+                _logger.LogError(e,"Erro"  + nameof(GetPaginacaoAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -241,6 +268,7 @@ namespace LeilaoFake.Me.Api.Controllers
             }
             catch(Exception e)
             {
+                _logger.LogError(e,"Erro"  + nameof(GetPaginacaoAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -260,6 +288,7 @@ namespace LeilaoFake.Me.Api.Controllers
             }
             catch(Exception e)
             {
+                _logger.LogError(e,"Erro"  + nameof(GetPaginacaoAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
