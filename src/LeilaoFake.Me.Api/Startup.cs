@@ -111,6 +111,8 @@ namespace LeilaoFake.Me.Api
                 options.Filters.Add(typeof(ErrorResponseFilter));
             });
 
+            services.AddCors();
+
             //https://github.com/domaindrivendev/Swashbuckle.AspNetCore
             services.AddSwaggerGen(sg =>
             {
@@ -137,6 +139,8 @@ namespace LeilaoFake.Me.Api
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCors(option => option.AllowAnyOrigin());
 
             app.UseSwagger();
 
