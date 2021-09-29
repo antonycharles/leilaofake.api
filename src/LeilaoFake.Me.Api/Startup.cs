@@ -111,18 +111,9 @@ namespace LeilaoFake.Me.Api
                 options.Filters.Add(typeof(ErrorResponseFilter));
             });
 
-            services.AddCors();
-
-            //https://github.com/domaindrivendev/Swashbuckle.AspNetCore
-            services.AddSwaggerGen(sg =>
-            {
-                sg.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-                {
-                    Title = "Leilao Fake",
-                    Description = "Documentacao da Api.",
-                    Version = "1.0"
-                });
-            });
+            services.AddCors(options => options.AddDefaultPolicy(
+                builder => builder.AllowAnyOrigin()
+            ));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -135,16 +126,20 @@ namespace LeilaoFake.Me.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            //app.UseHttpsRedirection();
             app.UseRouting();
+
+            /*app.Use((context, next) =>
+            {
+                context.Response.Headers.Add("Access-Control-Allow-Origin","*");
+                context.Response.Headers.Add("Access-Control-Allow-Credentials","true");
+                return next();
+            });*/
+
+            app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseCors(option => option.AllowAnyOrigin());
-
-            app.UseSwagger();
-
-            app.UseSwaggerUI(sgu => sgu.SwaggerEndpoint("/swagger/v1/swagger.json", "Versao 1.0"));
 
             app.UseEndpoints(endpoints =>
             {
