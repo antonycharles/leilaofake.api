@@ -23,7 +23,8 @@ services:
         volumes: 
           - /home/apps/leilaofake/logs/:/app/logs/
         ports:
-            - "80:5000"
+            - "80"
+            - "443"
         networks: 
             - production-network
             - postgres-network
@@ -37,7 +38,8 @@ services:
         volumes: 
           - /home/apps/leilaofake/logs/:/app/logs/
         ports:
-            - "80:5000"
+            - "80"
+            - "443"
         networks: 
             - production-network
             - postgres-network
