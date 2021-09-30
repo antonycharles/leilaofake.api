@@ -1,5 +1,5 @@
 # https://hub.docker.com/_/microsoft-dotnet
-FROM mcr.microsoft.com/dotnet/core/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 LABEL Antony Charles
 WORKDIR /app
 
@@ -23,7 +23,7 @@ COPY tests/LeilaoFake.Me.Test/. ./tests/LeilaoFake.Me.Test/
 WORKDIR /app/src/LeilaoFake.Me.Api
 RUN dotnet publish -c Release -o out 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/core/aspnet:5.0 AS runtime
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS runtime
 WORKDIR /app
 
 COPY --from=build /app/src/LeilaoFake.Me.Api/out ./
