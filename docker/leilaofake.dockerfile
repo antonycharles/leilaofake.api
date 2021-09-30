@@ -9,7 +9,6 @@ COPY src/LeilaoFake.Me.Api/*.csproj ./src/LeilaoFake.Me.Api/
 COPY src/LeilaoFake.Me.Core/*.csproj ./src/LeilaoFake.Me.Core/
 COPY src/LeilaoFake.Me.Infra/*.csproj ./src/LeilaoFake.Me.Infra/
 COPY src/LeilaoFake.Me.Service/*.csproj ./src/LeilaoFake.Me.Service/
-COPY tests/LeilaoFake.Me.Test/*.csproj ./tests/LeilaoFake.Me.Test/
 #
 RUN dotnet restore
 #
@@ -18,12 +17,11 @@ COPY src/LeilaoFake.Me.Api/. ./src/LeilaoFake.Me.Api/
 COPY src/LeilaoFake.Me.Core/. ./src/LeilaoFake.Me.Core/
 COPY src/LeilaoFake.Me.Infra/. ./src/LeilaoFake.Me.Infra/
 COPY src/LeilaoFake.Me.Service/. ./src/LeilaoFake.Me.Service/
-COPY tests/LeilaoFake.Me.Test/. ./tests/LeilaoFake.Me.Test/
 #
 WORKDIR /app/src/LeilaoFake.Me.Api
 RUN dotnet publish -c Release -o out 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 as runtime
 WORKDIR /app
 
 COPY --from=build /app/src/LeilaoFake.Me.Api/out ./
