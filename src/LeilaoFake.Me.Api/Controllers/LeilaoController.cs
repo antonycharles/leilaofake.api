@@ -135,7 +135,11 @@ namespace LeilaoFake.Me.Api.Controllers
                 {
                     var usuarioAutenticado = new UsuarioAutenticado(User);
                     var leilao = await _leilaoService.InsertAsync(model.ToLeilao(usuarioAutenticado.Id));
-                    return CreatedAtAction("GetId", new { leilaoId = leilao.Id }, new LeilaoResponse(leilao, _urlHelper, usuarioAutenticado));
+
+                    var leilaoResponse = new LeilaoResponse(leilao, _urlHelper, usuarioAutenticado);
+                    leilaoResponse.AddAllLinks();
+
+                    return CreatedAtAction("GetId", new { leilaoId = leilao.Id }, leilaoResponse);
                 }
 
                 return BadRequest(ErrorResponse.FromModelState(ModelState));
