@@ -125,8 +125,13 @@ namespace LeilaoFake.Me.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseHsts();
+            }
 
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseRouting();
 
             /*app.Use((context, next) =>
