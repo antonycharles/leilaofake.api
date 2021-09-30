@@ -13,11 +13,12 @@ namespace LeilaoFake.Me.Api.Requests
         public string LeilaoId { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Valor é obrigatório")]
-        public double Valor { get; set; }
+        [Range(1,99999999,ErrorMessage = "Valor do lance mínimo deve ser de {1} até {2}")]
+        public double? Valor { get; set; }
 
         public Lance ToLance(string interessadoId)
         {
-            return new Lance(interessadoId, Valor, LeilaoId);
+            return new Lance(interessadoId, Valor.Value, LeilaoId);
         }
     }
 }

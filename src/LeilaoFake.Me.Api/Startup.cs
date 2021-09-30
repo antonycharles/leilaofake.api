@@ -112,7 +112,7 @@ namespace LeilaoFake.Me.Api
             });
 
             services.AddCors(options => options.AddDefaultPolicy(
-                builder => builder.AllowAnyOrigin().AllowCredentials()
+                builder => builder.AllowAnyOrigin()
             ));
         }
 

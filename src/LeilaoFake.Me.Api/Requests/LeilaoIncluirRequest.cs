@@ -15,18 +15,19 @@ namespace LeilaoFake.Me.Api.Requests
         public string Titulo { get; set; }
         public string Descricao { get; set; }
 
+        [Range(1,99999999,ErrorMessage = "Valor do lance mínimo deve ser de {1} até {2}")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Lance mínimo obrigatório")]
-        public double LanceMinimo { get; set; }
+        public double? LanceMinimo { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Data início do leilão é obrigatório")]
-        public DateTime DataInicio { get; set; }
+        public DateTime? DataInicio { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Data fim do leilão é obrigatório")]
-        public DateTime DataFim { get; set; }
+        public DateTime? DataFim { get; set; }
 
         public Leilao ToLeilao(string leiloadoPorId)
         {
-            return new Leilao(leiloadoPorId, this.Titulo, this.Descricao, this.DataInicio,this.DataFim,this.LanceMinimo);
+            return new Leilao(leiloadoPorId, this.Titulo, this.Descricao, this.DataInicio.Value, this.DataFim.Value, this.LanceMinimo.Value);
         }
     }
 }
