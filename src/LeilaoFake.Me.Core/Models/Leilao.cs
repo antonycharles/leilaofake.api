@@ -52,8 +52,8 @@ namespace LeilaoFake.Me.Core.Models
         }
         public DateTime DataInicio { get; private set; }
 
-        private DateTime? _dataFim;
-        public DateTime? DataFim 
+        private DateTime _dataFim;
+        public DateTime DataFim 
         {
             get
             {

@@ -8,24 +8,28 @@ using Bogus;
 using LeilaoFake.Me.Core.Models;
 using LeilaoFake.Me.Infra.Data.Repositories;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace LeilaoFake.Me.Test.Repositories 
 {
-    public class LeilaoRepositoryTest : IClassFixture<CustomWebApplicationFactory<LeilaoFake.Me.Api.Startup>>
+    public class LeilaoRepositoryTest
     {
-        private readonly HttpClient _client;
-        private readonly CustomWebApplicationFactory<LeilaoFake.Me.Api.Startup> _factory;
         private readonly IDbConnection _dbConnection;
 
-        public LeilaoRepositoryTest(CustomWebApplicationFactory<LeilaoFake.Me.Api.Startup> factory)
+        public LeilaoRepositoryTest()
         {
-            _factory = factory;
-            _client = factory.CreateClient(new WebApplicationFactoryClientOptions
+            var dataBaseTest = new DataBaseTest("db_leilaofake_test_leilao_repository");
+            //dataBaseTest.CreateDataBaseTest();
+
+            var serviceProvider = dataBaseTest.CreateServices();
+
+            using (var scope = serviceProvider.CreateScope())
             {
-                AllowAutoRedirect = false
-            });
-            _dbConnection = factory.GetConnection();
+                dataBaseTest.UpdateDatabase(scope.ServiceProvider);
+            }
+
+            _dbConnection = dataBaseTest.GetConnection();
         }
 
         [Fact]

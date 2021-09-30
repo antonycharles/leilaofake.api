@@ -3,27 +3,34 @@ using System.Data;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Bogus;
+using LeilaoFake.Me.Api;
 using LeilaoFake.Me.Core.Models;
 using LeilaoFake.Me.Infra.Data.Repositories;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace LeilaoFake.Me.Test.Repositories
 {
-    public class LanceRepositoryTest : IClassFixture<CustomWebApplicationFactory<LeilaoFake.Me.Api.Startup>>
+    public class LanceRepositoryTest 
     {
-        private readonly HttpClient _client;
-        private readonly CustomWebApplicationFactory<LeilaoFake.Me.Api.Startup> _factory;
         private readonly IDbConnection _dbConnection;
 
-        public LanceRepositoryTest(CustomWebApplicationFactory<LeilaoFake.Me.Api.Startup> factory)
+        public LanceRepositoryTest()
         {
-            _factory = factory;
-            _client = factory.CreateClient(new WebApplicationFactoryClientOptions
+            var dataBaseTest = new DataBaseTest("db_leilaofake_test_lance_repository");
+            //dataBaseTest.CreateDataBaseTest();
+
+            var serviceProvider = dataBaseTest.CreateServices();
+
+            using (var scope = serviceProvider.CreateScope())
             {
-                AllowAutoRedirect = false
-            });
-            _dbConnection = factory.GetConnection();
+                dataBaseTest.UpdateDatabase(scope.ServiceProvider);
+            }
+
+            _dbConnection = dataBaseTest.GetConnection();
         }
 
         [Fact]
