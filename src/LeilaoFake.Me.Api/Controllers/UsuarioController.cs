@@ -24,6 +24,13 @@ namespace LeilaoFake.Me.Api.Controllers
             _usuarioService = usuarioService;
         }
 
+        /// <summary>
+        /// Pesquisa usuários públicos.
+        /// </summary>
+        /// <param name="pagina"> página atual da pesquisa.</param>
+        /// <param name="porPagina"> total de itens por página.</param>
+        /// <param name="order"> ordenação da pesquisa.</param>
+        /// <returns>Usuários paginação response</returns>
         [HttpGet]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(UsuarioPaginacao), 200)]
@@ -44,9 +51,14 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Pesquisa usuário.
+        /// </summary>
+        /// <param name="id"> id do usuário que deseja buscar.</param>
+        /// <returns>Leilões response</returns>
         [HttpGet("{id}")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(typeof(Usuario), 200)]
+        [ProducesResponseType(typeof(UsuarioResponse), 200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> GetIdAsync(string id)
@@ -58,7 +70,9 @@ namespace LeilaoFake.Me.Api.Controllers
                 if(usuario == null)
                     throw new Exception("Usuário não encontrado");
 
-                return Ok(usuario);
+                var usuarioResponse = new UsuarioResponse(usuario);
+
+                return Ok(usuarioResponse);
             }
             catch (Exception e)
             {
@@ -66,9 +80,14 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Cadastra um novo usuário.
+        /// </summary>
+        /// <param name="model"> FromBody com as informações sober o usuário</param>
+        /// <returns>Usuário criado</returns>
         [HttpPost]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(typeof(Usuario), 201)]
+        [ProducesResponseType(typeof(UsuarioResponse), 201)]
         [ProducesResponseType(typeof(ErrorResponse), 400)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> IncluirAsync([FromBody] UsuarioIncluirRequest model)
@@ -78,7 +97,10 @@ namespace LeilaoFake.Me.Api.Controllers
                 if (ModelState.IsValid)
                 {
                     var usuario = await _usuarioService.InsertAsync(model.ToUsuario());
-                    return Created(usuario.Id, usuario);
+
+                    var usuarioResponse = new UsuarioResponse(usuario);
+
+                    return Created(usuario.Id, usuarioResponse);
                 }
 
                 return BadRequest(ErrorResponse.FromModelState(ModelState));
@@ -89,6 +111,11 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Altera usuário.
+        /// </summary>
+        /// <param name="id">id do usuário que vai ser alterado.</param>
+        /// <param name="model"> FromBody com as informações sober o usuário.</param>
         [HttpPut("{id}")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(200)]
@@ -112,6 +139,10 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Remover usuário.
+        /// </summary>
+        /// <param name="id">id do usuário que vai ser deletado.</param>
         [HttpDelete("{id}")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(200)]

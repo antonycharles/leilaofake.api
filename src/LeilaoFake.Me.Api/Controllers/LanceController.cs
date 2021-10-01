@@ -22,7 +22,6 @@ namespace LeilaoFake.Me.Api.Controllers
             _lanceService = lanceService;
         }
 
-
         /// <summary>
         /// Cadastra um novo lance para uma leilão em andamento.
         /// </summary>

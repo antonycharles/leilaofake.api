@@ -30,9 +30,17 @@ namespace LeilaoFake.Me.Api.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Pesquisa leilões públicos.
+        /// </summary>
+        /// <param name="pagina"> página atual da pesquisa.</param>
+        /// <param name="porPagina"> total de itens por página.</param>
+        /// <param name="order"> ordenação da pesquisa.</param>
+        /// <param name="search"> palavra chave da pesquisa.</param>
+        /// <returns>Leilões paginação response</returns>
         [HttpGet]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(IList<Leilao>), 200)]
+        [ProducesResponseType(typeof(LeilaoPaginacaoResponse), 200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> GetPaginacaoAsync(int? pagina, int? porPagina, string order, string search)
@@ -62,9 +70,17 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Pesquisa leilões do usuário logado.
+        /// </summary>
+        /// <param name="pagina"> página atual da pesquisa.</param>
+        /// <param name="porPagina"> total de itens por página.</param>
+        /// <param name="order"> ordenação da pesquisa.</param>
+        /// <param name="search"> palavra chave da pesquisa.</param>
+        /// <returns>Leilões paginação response</returns>
         [HttpGet("meus-leiloes")]
         [Authorize(Roles = "default,admin")]
-        [ProducesResponseType(typeof(IList<Leilao>), 200)]
+        [ProducesResponseType(typeof(LeilaoPaginacaoResponse), 200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> GetAllMeusLeiloesAsync(int? pagina, int? porPagina, string order, string search)
@@ -94,9 +110,14 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Pesquisa leilão.
+        /// </summary>
+        /// <param name="leilaoId"> id do leilão que deseja buscar.</param>
+        /// <returns>Leilões response</returns>
         [HttpGet("{leilaoId}")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(Leilao), 200)]
+        [ProducesResponseType(typeof(LeilaoResponse), 200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> GetIdAsync(string leilaoId)
@@ -122,9 +143,14 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Cadastra um novo leilão.
+        /// </summary>
+        /// <param name="model"> FromBody com as informações sober o leilão</param>
+        /// <returns>Leilão criado</returns>
         [HttpPost]
         [Authorize(Roles = "default,admin")]
-        [ProducesResponseType(typeof(Leilao), 201)]
+        [ProducesResponseType(typeof(LeilaoResponse), 201)]
         [ProducesResponseType(typeof(ErrorResponse), 401)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> IncluirAsync([FromBody] LeilaoIncluirRequest model)
@@ -151,6 +177,11 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Altera um leilão.
+        /// </summary>
+        /// <param name="leilaoId"> id do leilão que deseja alterar.</param>
+        /// <param name="model"> FromBody com as informações sober o leilão</param>
         [HttpPut("{leilaoId}")]
         [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
@@ -176,6 +207,10 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Remove um leilão.
+        /// </summary>
+        /// <param name="leilaoId"> id do leilão que deseja deletar.</param>
         [HttpDelete("{leilaoId}")]
         [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
@@ -197,7 +232,11 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
-        [HttpPatch("{leilaoId}/iniciar_pregao")]
+        /// <summary>
+        /// Inicia pregão do leilão.
+        /// </summary>
+        /// <param name="leilaoId"> id do leilão que deseja iniciar pregão.</param>
+        [HttpPatch("{leilaoId}/iniciar-pregao")]
         [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
@@ -217,6 +256,10 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Cancela leilão.
+        /// </summary>
+        /// <param name="leilaoId"> id do leilão que deseja cancelar.</param>
         [HttpPatch("{leilaoId}/cancelar")]
         [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
@@ -237,6 +280,10 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Finaliza leilão.
+        /// </summary>
+        /// <param name="leilaoId"> id do leilão que deseja finalizar.</param>
         [HttpPatch("{leilaoId}/finaliza")]
         [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
@@ -257,8 +304,12 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
-        [HttpPatch("{leilaoId}/tornar_publico")]
-        [Authorize(Roles = "default,admin")]
+        /// <summary>
+        /// Tornar público leilão.
+        /// </summary>
+        /// <param name="leilaoId"> id do leilão que deseja tornar público.</param>
+        [HttpPatch("{leilaoId}/tornar-publico")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
@@ -277,7 +328,11 @@ namespace LeilaoFake.Me.Api.Controllers
             }
         }
 
-        [HttpPatch("{leilaoId}/tornar_privado")]
+        /// <summary>
+        /// Tornar privado leilão.
+        /// </summary>
+        /// <param name="leilaoId"> id do leilão que deseja tornar privado.</param>
+        [HttpPatch("{leilaoId}/tornar-privado")]
         [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]

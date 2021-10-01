@@ -69,8 +69,7 @@ namespace LeilaoFake.Me.Core.Models
                 _leilaoId = value;
             } 
         }
-        public Leilao Leilao { get; private set; }
-
+        
         public Lance() { }
         public Lance(string interessadoId, double valor, string leilaoId)
         {
