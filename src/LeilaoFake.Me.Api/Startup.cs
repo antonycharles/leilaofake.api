@@ -23,9 +23,11 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using LeilaoFake.Me.Api.Token;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.IO;
 
 namespace LeilaoFake.Me.Api
 {
@@ -114,12 +116,42 @@ namespace LeilaoFake.Me.Api
             services.AddCors(options => options.AddDefaultPolicy(
                 builder => builder.AllowAnyOrigin()
             ));
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>{
+                c.SwaggerDoc("v1", new OpenApiInfo 
+                {
+                    Version = "v1",
+                    Title = "Api Leilão Fake",
+                    Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce leo elit, interdum id urna non, facilisis cursus neque. Mauris sed libero eros. Phasellus facilisis nulla quis justo feugiat mollis. Maecenas euismod semper lacinia. Curabitur sed nunc ac purus hendrerit fringilla a in neque. Curabitur lacinia nunc orci, nec venenatis libero malesuada sed. Nulla eu viverra libero, cursus gravida felis. Morbi ut odio dapibus, consequat dolor non, sollicitudin ante. Morbi nisl metus, luctus quis viverra sit amet, pulvinar placerat quam.",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Antony Reis",
+                        Email = "antony.reis.dev@gmail.com",
+                        Url = new Uri("https://antonycharles.com.br/"),
+                    }
+                });
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMigrationRunner migrationRunner)
         {
             migrationRunner.MigrateUp();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             if (env.IsDevelopment())
             {
