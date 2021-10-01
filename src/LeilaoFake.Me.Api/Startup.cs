@@ -114,7 +114,10 @@ namespace LeilaoFake.Me.Api
             });
 
             services.AddCors(options => options.AddDefaultPolicy(
-                builder => builder.AllowAnyOrigin()
+                builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
             ));
 
             // Register the Swagger generator, defining 1 or more Swagger documents
@@ -131,6 +134,7 @@ namespace LeilaoFake.Me.Api
                         Url = new Uri("https://antonycharles.com.br/"),
                     }
                 });
+
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -150,7 +154,7 @@ namespace LeilaoFake.Me.Api
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1.0");
             });
 
             if (env.IsDevelopment())
