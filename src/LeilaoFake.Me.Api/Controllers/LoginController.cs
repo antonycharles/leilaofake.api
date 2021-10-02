@@ -47,7 +47,7 @@ namespace LeilaoFake.Me.Api.Controllers
 
                 // Verifica se o usuário existe
                 if (user == null)
-                    return NotFound(new { message = "Usuário ou senha inválidos!" });
+                    return BadRequest(new { message = "Usuário ou senha inválidos!" });
 
                 var token = _tokenService.GenerateToken(user);
 
