@@ -36,7 +36,7 @@ namespace LeilaoFake.Me.Api.Token
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return new LoginResponse(dataCriacao, dataExpiracao, tokenHandler.WriteToken(token), new UsuarioResponse(user));
+            return new LoginResponse(dataCriacao, dataExpiracao, tokenHandler.WriteToken(token), new UsuarioResponse(user,null,null));
         }
 
         private ClaimsIdentity CreateClaimsIndentity(Usuario user)

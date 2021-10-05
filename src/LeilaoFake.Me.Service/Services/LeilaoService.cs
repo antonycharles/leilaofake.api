@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using LeilaoFake.Me.Core.Models;
-using LeilaoFake.Me.Infra.Data.Repositories;
+using LeilaoFake.Me.Infra.Datas.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace LeilaoFake.Me.Service.Services
@@ -119,9 +119,9 @@ namespace LeilaoFake.Me.Service.Services
 
         private async Task<Leilao> GetLeilaoByIdAndLeiloadoPorId(string leilaoId, string leiloadoPorId)
         {
-            var leilao = await _leilaoRepository.GetByIdAsync(leilaoId);
+            var leilao = await _leilaoRepository.GetByIdAndLeiloadoPorIdAsync(leilaoId, leiloadoPorId);
 
-            if (leilao == null || leilao.LeiloadoPorId != leiloadoPorId)
+            if (leilao == null)
                 throw new ArgumentException("Leilão não encontrado!");
 
             return leilao;

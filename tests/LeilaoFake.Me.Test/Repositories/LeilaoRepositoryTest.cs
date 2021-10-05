@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Bogus;
 using LeilaoFake.Me.Core.Models;
-using LeilaoFake.Me.Infra.Data.Repositories;
+using LeilaoFake.Me.Infra.Datas.Repositories;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -71,6 +71,26 @@ namespace LeilaoFake.Me.Test.Repositories
         }
 
         [Fact]
+        public async Task GetLeilaoIdAndLeiloadoPorIdComSucessoAsync()
+        {
+            //Arranje
+            var faker = new Faker("pt_BR");
+            var leilaoRepository = new LeilaoRepository(_dbConnection);
+            var usuarioRepository = new UsuarioRepository(_dbConnection);
+            var usuarioId = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
+
+            var leilaoId = await leilaoRepository.InsertAsync(
+                new Leilao(usuarioId, "Teste leilão GetLeilaoIdComSucesso", null, DateTime.UtcNow, DateTime.UtcNow.AddDays(50), 250.50)
+            );
+
+            //Act
+            Leilao leilao = await leilaoRepository.GetByIdAndLeiloadoPorIdAsync(leilaoId,usuarioId);
+
+            //Assert
+            Assert.Equal(leilao.Id, leilaoId);
+        }
+
+        [Fact]
         public async Task GetLeiloadoPorIdComSucessoAsync()
         {
             //Arranje
@@ -118,7 +138,6 @@ namespace LeilaoFake.Me.Test.Repositories
         public async Task DeleteLeilaoComSucesso()
         {
             //Arranje
-            //Arranje
             var faker = new Faker("pt_BR");
             var leilaoRepository = new LeilaoRepository(_dbConnection);
             var usuarioRepository = new UsuarioRepository(_dbConnection);
@@ -130,6 +149,9 @@ namespace LeilaoFake.Me.Test.Repositories
 
             //Act
             await leilaoRepository.DeleteAsync(leilaoId);
+
+            //Assert
+            Assert.Null(await leilaoRepository.GetByIdAsync(leilaoId));
         }
         
 

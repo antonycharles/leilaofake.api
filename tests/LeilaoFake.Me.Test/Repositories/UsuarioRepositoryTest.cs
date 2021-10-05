@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Bogus;
 using LeilaoFake.Me.Core.Models;
-using LeilaoFake.Me.Infra.Data.Repositories;
+using LeilaoFake.Me.Infra.Datas.Repositories;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;

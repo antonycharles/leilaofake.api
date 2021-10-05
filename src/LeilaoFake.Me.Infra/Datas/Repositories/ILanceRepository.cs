@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LeilaoFake.Me.Core.Models;
 
-namespace LeilaoFake.Me.Infra.Data.Repositories
+namespace LeilaoFake.Me.Infra.Datas.Repositories
 {
     public interface ILanceRepository
     {

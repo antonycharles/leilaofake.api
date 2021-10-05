@@ -70,6 +70,7 @@ namespace LeilaoFake.Me.Core.Models
         }
 
         public IList<Lance> Lances { get; private set; } = new List<Lance>();
+        public IList<LeilaoImagem> LeilaoImagems { get; private set; } = new List<LeilaoImagem>();
 
         public StatusLeilaoEnum Status { get; private set; }
         

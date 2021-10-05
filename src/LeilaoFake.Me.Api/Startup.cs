@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using FluentMigrator.Runner;
 using LeilaoFake.Me.Api.Responses;
 using LeilaoFake.Me.Service.Services;
-using LeilaoFake.Me.Infra.Data.Repositories;
+using LeilaoFake.Me.Infra.Datas.Repositories;
 using LeilaoFake.Me.Infra.Datas.Migrations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -95,13 +95,17 @@ namespace LeilaoFake.Me.Api
                 return factory.GetUrlHelper(actionContext);
             });
 
+            services.AddSingleton<IConfiguration>(Configuration);
+
             services.AddTransient<ILeilaoRepository,LeilaoRepository>();
             services.AddTransient<IUsuarioRepository, UsuarioRepository>();
             services.AddTransient<ILanceRepository, LanceRepository>();
+            services.AddTransient<ILeilaoImagemRepository, LeilaoImagemRepository>();
 
             services.AddTransient<IUsuarioService,UsuarioService>();
             services.AddTransient<ILeilaoService, LeilaoService>();
             services.AddTransient<ILanceService, LanceService>();
+            services.AddTransient<ILeilaoImagemService, LeilaoImagemService>();
 
 
             services.Configure<ApiBehaviorOptions>(options =>

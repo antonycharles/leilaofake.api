@@ -3,10 +3,7 @@ using LeilaoFake.Me.Api.Requests;
 using LeilaoFake.Me.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using LeilaoFake.Me.Infra.Data.Repositories;
 using LeilaoFake.Me.Service.Services;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
@@ -18,10 +15,12 @@ namespace LeilaoFake.Me.Api.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;
+        private readonly IUrlHelper _urlHelper;
 
-        public UsuarioController(IUsuarioService usuarioService)
+        public UsuarioController(IUsuarioService usuarioService, IUrlHelper urlHelper)
         {
             _usuarioService = usuarioService;
+            _urlHelper = urlHelper;
         }
 
         /// <summary>
@@ -33,7 +32,7 @@ namespace LeilaoFake.Me.Api.Controllers
         /// <returns>Usuários paginação response</returns>
         [HttpGet]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(typeof(UsuarioPaginacao), 200)]
+        [ProducesResponseType(typeof(UsuarioPaginacaoResponse), 200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> GetAllAsync(int? pagina, int? porPagina, string order)
@@ -41,9 +40,10 @@ namespace LeilaoFake.Me.Api.Controllers
             try
             {
 
+                var usuarioAutenticado = new UsuarioAutenticado(User);
                 var usuarioPaginacao = new UsuarioPaginacao(porPagina:porPagina, pagina:pagina, order:order);
                 var usuarios = await _usuarioService.GetAllAsync(usuarioPaginacao);
-                return Ok(usuarios);
+                return Ok(new UsuarioPaginacaoResponse(usuarios,_urlHelper,usuarioAutenticado));
             }
             catch (Exception e)
             {
@@ -70,7 +70,8 @@ namespace LeilaoFake.Me.Api.Controllers
                 if(usuario == null)
                     throw new Exception("Usuário não encontrado");
 
-                var usuarioResponse = new UsuarioResponse(usuario);
+                var usuarioAutenticado = new UsuarioAutenticado(User);
+                var usuarioResponse = new UsuarioResponse(usuario,_urlHelper,usuarioAutenticado);
 
                 return Ok(usuarioResponse);
             }
@@ -98,7 +99,8 @@ namespace LeilaoFake.Me.Api.Controllers
                 {
                     var usuario = await _usuarioService.InsertAsync(model.ToUsuario());
 
-                    var usuarioResponse = new UsuarioResponse(usuario);
+                    var usuarioAutenticado = new UsuarioAutenticado(User);
+                    var usuarioResponse = new UsuarioResponse(usuario,_urlHelper,usuarioAutenticado);
 
                     return Created(usuario.Id, usuarioResponse);
                 }

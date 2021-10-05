@@ -12,7 +12,7 @@ using LeilaoFake.Me.Core.Enums;
 using System.Runtime.InteropServices;
 using Dapper.Contrib.Extensions;
 
-namespace LeilaoFake.Me.Infra.Data.Repositories
+namespace LeilaoFake.Me.Infra.Datas.Repositories
 {
     public class LeilaoRepository : ILeilaoRepository
     {
@@ -31,18 +31,67 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
                     * 
                 FROM leiloes AS LE 
                 LEFT JOIN lances AS LA ON LE.id = LA.leilaoid 
+                LEFT JOIN leilaoimagens AS LEI ON LE.id = LEI.leilaoid
                 WHERE LE.id = @id";
 
-            var result = await _dbConnection.QueryAsync<Leilao, Lance, Leilao>(sql,
-                            (leilao, lance) =>
-                            {
-                                Leilao leilaoEntry = leilao;
+            var leilaoDictionary = new Dictionary<string, Leilao>();
 
-                                leilaoEntry.Lances.Add(lance);
+            var result = await _dbConnection.QueryAsync<Leilao, Lance, LeilaoImagem, Leilao>(sql,
+                            (leilao, lance, leilaoImagem) =>
+                            {
+                                Leilao leilaoEntry;
+
+                                if (!leilaoDictionary.TryGetValue(leilao.Id, out leilaoEntry))
+                                {
+                                    leilaoEntry = leilao;
+                                    leilaoDictionary.Add(leilaoEntry.Id, leilaoEntry);
+                                }
+
+                                if(lance != null)
+                                    leilaoEntry.Lances.Add(lance);
+
+                                if(leilaoImagem != null)
+                                    leilaoEntry.LeilaoImagems.Add(leilaoImagem);
 
                                 return leilaoEntry;
                             },
                             new { id = leilaoId });
+
+            return result.FirstOrDefault();
+        }
+
+        public async Task<Leilao> GetByIdAndLeiloadoPorIdAsync(string leilaoId, string leiloadoPorId)
+        {
+            string sql = @"
+                SELECT 
+                    * 
+                FROM leiloes AS LE 
+                LEFT JOIN lances AS LA ON LE.id = LA.leilaoid 
+                LEFT JOIN leilaoimagens AS LEI ON LE.id = LEI.leilaoid
+                WHERE LE.id = @id AND LE.leiloadoporid = @leiloadoPorId";
+
+            var leilaoDictionary = new Dictionary<string, Leilao>();
+
+            var result = await _dbConnection.QueryAsync<Leilao, Lance, LeilaoImagem, Leilao>(sql,
+                            (leilao, lance, leilaoImagem) =>
+                            {
+                                Leilao leilaoEntry;
+
+                                if (!leilaoDictionary.TryGetValue(leilao.Id, out leilaoEntry))
+                                {
+                                    leilaoEntry = leilao;
+                                    leilaoDictionary.Add(leilaoEntry.Id, leilaoEntry);
+                                }
+
+                                if(lance != null)
+                                    leilaoEntry.Lances.Add(lance);
+
+                                if(leilaoImagem != null)
+                                    leilaoEntry.LeilaoImagems.Add(leilaoImagem);
+
+                                return leilaoEntry;
+                            },
+                            new { id = leilaoId, leiloadoPorId = leiloadoPorId });
 
             return result.FirstOrDefault();
         }
@@ -89,15 +138,27 @@ namespace LeilaoFake.Me.Infra.Data.Repositories
                 SELECT 
                     * 
                 FROM leiloes AS LE 
-                LEFT JOIN lances AS LA ON LE.id = LA.leilaoid 
+                LEFT JOIN lances AS LA ON LE.id = LA.leilaoid
+                LEFT JOIN leilaoimagens AS LEI ON LE.id = LEI.leilaoid
                 WHERE LE.leiloadoPorId = @leiloadoPorId";
 
-            var result = await _dbConnection.QueryAsync<Leilao, Lance, Leilao>(sql,
-                            (leilao, lance) =>
+            var leilaoDictionary = new Dictionary<string, Leilao>();
+            var result = await _dbConnection.QueryAsync<Leilao, Lance, LeilaoImagem, Leilao>(sql,
+                            (leilao, lance, leilaoImagem) =>
                             {
-                                Leilao leilaoEntry = leilao;
+                                Leilao leilaoEntry;
 
-                                leilaoEntry.Lances.Add(lance);
+                                if (!leilaoDictionary.TryGetValue(leilao.Id, out leilaoEntry))
+                                {
+                                    leilaoEntry = leilao;
+                                    leilaoDictionary.Add(leilaoEntry.Id, leilaoEntry);
+                                }
+
+                                if(lance != null)
+                                    leilaoEntry.Lances.Add(lance);
+
+                                if(leilaoImagem != null)
+                                    leilaoEntry.LeilaoImagems.Add(leilaoImagem);
 
                                 return leilaoEntry;
                             },

@@ -1,10 +1,11 @@
 using LeilaoFake.Me.Core.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LeilaoFake.Me.Api.Responses
 {
     public class UsuarioResponse
     {
-        public UsuarioResponse(Usuario usuario)
+        public UsuarioResponse(Usuario usuario, IUrlHelper urlHelper, UsuarioAutenticado usuarioAutenticado)
         {
             Id = usuario.Id;
             Nome = usuario.Nome;

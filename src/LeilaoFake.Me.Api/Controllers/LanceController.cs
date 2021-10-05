@@ -16,10 +16,12 @@ namespace LeilaoFake.Me.Api.Controllers
     public class LanceController : ControllerBase
     {
         private readonly ILanceService _lanceService;
+        private readonly IUrlHelper _urlHelper;
 
-        public LanceController(ILanceService lanceService)
+        public LanceController(ILanceService lanceService, IUrlHelper urlHelper)
         {
             _lanceService = lanceService;
+            _urlHelper = urlHelper;
         }
 
         /// <summary>
@@ -40,7 +42,7 @@ namespace LeilaoFake.Me.Api.Controllers
                 {
                     var usuarioAutenticado = new UsuarioAutenticado(User);
                     var lance = await _lanceService.InsertAsync(model.ToLance(usuarioAutenticado.Id));
-                    return Created(lance.Id, lance);
+                    return Created(lance.Id, new LanceResponse(lance,_urlHelper,usuarioAutenticado));
                 }
 
                 return BadRequest(ErrorResponse.FromModelState(ModelState));

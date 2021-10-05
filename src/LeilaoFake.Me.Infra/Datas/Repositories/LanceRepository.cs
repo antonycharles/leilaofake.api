@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LeilaoFake.Me.Infra.Data.Repositories
+namespace LeilaoFake.Me.Infra.Datas.Repositories
 {
     public class LanceRepository : ILanceRepository
     {
