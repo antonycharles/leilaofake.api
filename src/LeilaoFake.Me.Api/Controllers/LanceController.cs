@@ -31,7 +31,7 @@ namespace LeilaoFake.Me.Api.Controllers
         /// <returns>Lance criado</returns>
         [HttpPost]
         [Authorize(Roles = "default,admin")]
-        [ProducesResponseType(typeof(Lance), 201)]
+        [ProducesResponseType(typeof(LanceResponse), 201)]
         [ProducesResponseType(typeof(ErrorResponse), 400)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> IncluirAsync([FromBody] LanceIncluirRequest model)

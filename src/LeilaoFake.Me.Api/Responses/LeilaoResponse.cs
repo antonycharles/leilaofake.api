@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Policy;
 using LeilaoFake.Me.Core.Models;
@@ -16,7 +17,7 @@ namespace LeilaoFake.Me.Api.Responses
 
         public string Id { get; private set; }
         public string LeiloadoPorId { get; private set; }
-        public Usuario LeiloadoPor { get; private set; }
+        public UsuarioResponse LeiloadoPor { get; private set; }
         public bool IsPublico {get; private set; }
         public DateTime CriadoEm { get; private set; }
         public DateTime? AlteradoEm { get; private set; }
@@ -26,9 +27,10 @@ namespace LeilaoFake.Me.Api.Responses
         public double LanceMinimo { get; private set; }
         public DateTime DataInicio { get; private set; }
         public DateTime? DataFim { get; private set; }
-        public IList<Lance> Lances { get; private set; }
+        public IList<LanceResponse> Lances { get; private set; }
+        public IList<LeilaoImagemResponse> LeilaoImagens { get; private set; }
         public string LanceGanhadorId { get; private set; }
-        public Lance LanceGanhador { get; private set; }
+        public LanceResponse LanceGanhador { get; private set; }
         public string Status { get; private set; }
         public IList<LinkResponse> Links { get; private set; } = new List<LinkResponse>();
 
@@ -40,7 +42,6 @@ namespace LeilaoFake.Me.Api.Responses
 
             Id = leilao.Id;
             LeiloadoPorId = leilao.LeiloadoPorId;
-            LeiloadoPor = leilao.LeiloadoPor;
             IsPublico = leilao.IsPublico;
             CriadoEm = leilao.CriadoEm;
             AlteradoEm = leilao.AlteradoEm;
@@ -50,10 +51,17 @@ namespace LeilaoFake.Me.Api.Responses
             LanceMinimo = leilao.LanceMinimo;
             DataInicio = leilao.DataInicio;
             DataFim = leilao.DataFim;
-            Lances = leilao.Lances;
             LanceGanhadorId = leilao.LanceGanhadorId;
-            LanceGanhador = leilao.LanceGanhador;
             Status = leilao.StatusString;
+
+            if(leilao.LanceGanhador != null)
+                LanceGanhador = new LanceResponse(leilao.LanceGanhador, _urlHelper, usuarioAutenticado);
+
+            if(leilao.LeiloadoPor != null)
+                LeiloadoPor = new UsuarioResponse(leilao.LeiloadoPor,_urlHelper,usuarioAutenticado);
+                
+            Lances = leilao.Lances.Select(s => new LanceResponse(s,_urlHelper,usuarioAutenticado)).ToList();
+            LeilaoImagens = leilao.LeilaoImagems.Select(s => new LeilaoImagemResponse(s,_urlHelper,usuarioAutenticado)).ToList();
         }
 
         public void AddAllLinks()

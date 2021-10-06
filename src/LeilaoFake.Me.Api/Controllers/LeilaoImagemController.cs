@@ -39,7 +39,7 @@ namespace LeilaoFake.Me.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "default,admin")]
-        [ProducesResponseType(typeof(Lance), 201)]
+        [ProducesResponseType(typeof(LeilaoImagemResponse), 201)]
         [ProducesResponseType(typeof(ErrorResponse), 400)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
         public async Task<IActionResult> Incluir([FromForm] LeilaoImagemRequest model)

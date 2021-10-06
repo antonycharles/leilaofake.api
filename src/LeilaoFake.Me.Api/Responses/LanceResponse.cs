@@ -18,7 +18,9 @@ namespace LeilaoFake.Me.Api.Responses
             CriadoEm = lance.CriadoEm;
             Valor = lance.Valor;
             LeilaoId = lance.LeilaoId;
-            Interessado = new UsuarioResponse(lance.Interessado, urlHelper, usuarioAutenticado);
+
+            if(lance.Interessado != null)
+                Interessado = new UsuarioResponse(lance.Interessado, urlHelper, usuarioAutenticado);
         }
 
     }
