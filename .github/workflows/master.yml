@@ -32,6 +32,7 @@ jobs:
           script: |
             cd /home/apps/leilaofake
             cp ./private-leilaofake/appsettings.json ./src/LeilaoFake.Me.Api/appsettings.json
+            cp -R ./private-leilaofake/certificates ./docker/
             docker-compose down
             docker-compose build
             docker-compose up -d
