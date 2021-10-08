@@ -13,39 +13,6 @@ services:
             - "443:443"
         networks: 
             - production-network
-        depends_on:
-            - leilaofake1
-            - leilaofake2
-
-    leilaofake1:
-        build:
-            dockerfile: ./docker/leilaofake.dockerfile
-            context: .
-        image: antonycharles/leilaofake
-        container_name: leilao-fake-1
-        volumes: 
-          - /home/apps/leilaofake/logs/:/app/logs/
-        ports:
-            - "80"
-            - "443"
-        networks: 
-            - production-network
-            - postgres-network
-
-    leilaofake2:
-        build:
-            dockerfile: ./docker/leilaofake.dockerfile
-            context: .
-        image: antonycharles/leilaofake
-        container_name: leilao-fake-2
-        volumes: 
-          - /home/apps/leilaofake/logs/:/app/logs/
-        ports:
-            - "80"
-            - "443"
-        networks: 
-            - production-network
-            - postgres-network
 
 networks:
     production-network:
