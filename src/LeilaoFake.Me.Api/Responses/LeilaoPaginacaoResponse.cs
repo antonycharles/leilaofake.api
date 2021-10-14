@@ -15,6 +15,7 @@ namespace LeilaoFake.Me.Api.Responses
         public int? Total { get; private set; }
         public int PorPagina { get; private set; }
         public string Order { get; private set; }
+        public bool MeusLeiloes { get; private set;}
         public IList<LeilaoResponse> Resultados { get; private set; }
         public IList<LinkResponse> Links { get; private set; } = new List<LinkResponse>();
 
@@ -28,6 +29,7 @@ namespace LeilaoFake.Me.Api.Responses
             Total = leilaoPaginacao.Total;
             PorPagina = leilaoPaginacao.PorPagina;
             Order = leilaoPaginacao.Order;
+            MeusLeiloes = !leilaoPaginacao.IsPublico;
             Resultados = leilaoPaginacao.Resultados.Select(x => {
                 var leilao = new LeilaoResponse(x, urlHelper, usuarioAutenticado);
                 leilao.AddAllLinks();
@@ -61,7 +63,7 @@ namespace LeilaoFake.Me.Api.Responses
 
             if(totalDePaginas != 0 && totalDePaginas > this.Pagina){
                 Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("GetPaginacao","Leilao", new { Search, Pagina, PorPagina, Order}),
+                    href: _urlHelper.ActionLink("GetPaginacao","Leilao", new { Search, Pagina, PorPagina, Order, MeusLeiloes}),
                     rel: "proxima_pagina", 
                     metodo: "GET"));
             }
@@ -72,30 +74,7 @@ namespace LeilaoFake.Me.Api.Responses
             var totalDePaginas = this.Total / this.PorPagina;
             if(totalDePaginas != 0 && this.Pagina > 1){
                 Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("GetPaginacao","Leilao", new { Search, Pagina, PorPagina, Order}),
-                    rel: "pagina_anterior", 
-                    metodo: "GET"));
-            }
-        }
-
-        public void AddLinkProximaPaginaUsuarioLogado()
-        {
-            var totalDePaginas = this.Total / this.PorPagina;
-
-            if(totalDePaginas != 0 && totalDePaginas > this.Pagina){
-                Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("GetAllMeusLeiloes","Leilao", new { Search, Pagina, PorPagina, Order}),
-                    rel: "proxima_pagina", 
-                    metodo: "GET"));
-            }
-        }
-
-        public void AddLinkPaginaAnteriorUsuarioLogado()
-        {
-            var totalDePaginas = this.Total / this.PorPagina;
-            if(totalDePaginas != 0 && this.Pagina > 1){
-                Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("GetAllMeusLeiloes","Leilao", new { Search, Pagina, PorPagina, Order}),
+                    href: _urlHelper.ActionLink("GetPaginacao","Leilao", new { Search, Pagina, PorPagina, Order, MeusLeiloes}),
                     rel: "pagina_anterior", 
                     metodo: "GET"));
             }

@@ -37,24 +37,31 @@ namespace LeilaoFake.Me.Api.Controllers
         /// <param name="porPagina"> total de itens por página.</param>
         /// <param name="order"> ordenação da pesquisa.</param>
         /// <param name="search"> palavra chave da pesquisa.</param>
+        /// <param name="meusLeiloes"> informa se você deseja listar seus leilões.</param>
         /// <returns>Leilões paginação response</returns>
         [HttpGet]
         [AllowAnonymous]
         [ProducesResponseType(typeof(LeilaoPaginacaoResponse), 200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
         [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> GetPaginacaoAsync(int? pagina, int? porPagina, string order, string search)
+        public async Task<IActionResult> GetPaginacaoAsync(int? pagina, int? porPagina, string order, string search, Boolean? meusLeiloes = false)
         {
             try
             {   
                 _logger.LogInformation("Inicio {0}", nameof(GetPaginacaoAsync));
                 var usuarioAutenticado = new UsuarioAutenticado(User);
-                var listas = await _leilaoService.GetAllAsync(new LeilaoPaginacao(
+
+                var leilaoPaginacao = new LeilaoPaginacao(
                     porPagina:porPagina,
                     pagina:pagina,
                     order:order,
                     search:search
-                ));
+                );
+
+                if(meusLeiloes == true && usuarioAutenticado.IsAuthenticated == true)
+                    leilaoPaginacao.LeiloadoPorId = usuarioAutenticado.Id;
+
+                var listas = await _leilaoService.GetAllAsync(leilaoPaginacao);
                 
                 var leilaoPaginacaoResponse = new LeilaoPaginacaoResponse(listas, _urlHelper, usuarioAutenticado);
                 leilaoPaginacaoResponse.AddLinkMeusLeiloes();
@@ -66,46 +73,6 @@ namespace LeilaoFake.Me.Api.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e,"Erro"  + nameof(GetPaginacaoAsync));
-                return NotFound(ErrorResponse.From(e));
-            }
-        }
-
-        /// <summary>
-        /// Pesquisa leilões do usuário logado.
-        /// </summary>
-        /// <param name="pagina"> página atual da pesquisa.</param>
-        /// <param name="porPagina"> total de itens por página.</param>
-        /// <param name="order"> ordenação da pesquisa.</param>
-        /// <param name="search"> palavra chave da pesquisa.</param>
-        /// <returns>Leilões paginação response</returns>
-        [HttpGet("meus-leiloes")]
-        [Authorize(Roles = "default,admin")]
-        [ProducesResponseType(typeof(LeilaoPaginacaoResponse), 200)]
-        [ProducesResponseType(typeof(ErrorResponse), 404)]
-        [ProducesResponseType(typeof(ErrorResponse), 500)]
-        public async Task<IActionResult> GetAllMeusLeiloesAsync(int? pagina, int? porPagina, string order, string search)
-        {
-            try
-            {   
-                var usuarioAutenticado = new UsuarioAutenticado(User);
-                var listas = await _leilaoService.GetAllAsync(new LeilaoPaginacao(
-                    porPagina:porPagina,
-                    pagina:pagina,
-                    order:order,
-                    search:search,
-                    leiloadoPorId: usuarioAutenticado.Id
-                ));
-
-                var leilaoPaginacaoResponse = new LeilaoPaginacaoResponse(listas, _urlHelper, usuarioAutenticado);
-                leilaoPaginacaoResponse.AddLinkTodosLeiloes();
-                leilaoPaginacaoResponse.AddLinkPaginaAnteriorUsuarioLogado();
-                leilaoPaginacaoResponse.AddLinkProximaPaginaUsuarioLogado();
-                
-                return Ok(leilaoPaginacaoResponse);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e,"Erro"  + nameof(GetAllMeusLeiloesAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
