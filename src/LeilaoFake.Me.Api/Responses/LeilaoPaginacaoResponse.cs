@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using LeilaoFake.Me.Core.Models;
@@ -38,17 +39,6 @@ namespace LeilaoFake.Me.Api.Responses
             }).ToList();
         }
 
-        public void AddLinkMeusLeiloes()
-        {
-            if (_usuarioAutenticado.IsAuthenticated)
-            {
-                Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("GetAllMeusLeiloes", "Leilao"),
-                    rel: "meus_leiloes",
-                    metodo: "GET"));
-            }
-        }
-
         public void AddLinkTodosLeiloes()
         {
             if (_usuarioAutenticado.IsAuthenticated)
@@ -62,7 +52,7 @@ namespace LeilaoFake.Me.Api.Responses
 
         public void AddLinkProximaPagina()
         {
-            double? totalDePaginas = this.Total / this.PorPagina;
+            var totalDePaginas = this.Total / Convert.ToDouble(this.PorPagina);
 
             if (totalDePaginas != 0 && totalDePaginas > this.Pagina)
             {

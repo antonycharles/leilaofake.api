@@ -70,7 +70,6 @@ namespace LeilaoFake.Me.Api.Controllers
                 var listas = await _leilaoService.GetAllAsync(leilaoPaginacao);
 
                 var leilaoPaginacaoResponse = new LeilaoPaginacaoResponse(listas, _urlHelper, usuarioAutenticado);
-                leilaoPaginacaoResponse.AddLinkMeusLeiloes();
                 leilaoPaginacaoResponse.AddLinkPaginaAnterior();
                 leilaoPaginacaoResponse.AddLinkProximaPagina();
 
