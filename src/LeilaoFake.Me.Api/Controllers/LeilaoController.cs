@@ -47,22 +47,28 @@ namespace LeilaoFake.Me.Api.Controllers
         public async Task<IActionResult> GetPaginacaoAsync(int? pagina, int? porPagina, string order, string search, Boolean? meusLeiloes = false)
         {
             try
-            {   
+            {
                 _logger.LogInformation("Inicio {0}", nameof(GetPaginacaoAsync));
                 var usuarioAutenticado = new UsuarioAutenticado(User);
 
                 var leilaoPaginacao = new LeilaoPaginacao(
-                    porPagina:porPagina,
-                    pagina:pagina,
-                    order:order,
-                    search:search
+                    porPagina: porPagina,
+                    pagina: pagina,
+                    order: order,
+                    search: search
                 );
 
-                if(meusLeiloes == true && usuarioAutenticado.IsAuthenticated == true)
+                if (meusLeiloes == true)
+                {
+                    if (usuarioAutenticado.IsAuthenticated == false)
+                        return Unauthorized();
+
                     leilaoPaginacao.LeiloadoPorId = usuarioAutenticado.Id;
+                }
+
 
                 var listas = await _leilaoService.GetAllAsync(leilaoPaginacao);
-                
+
                 var leilaoPaginacaoResponse = new LeilaoPaginacaoResponse(listas, _urlHelper, usuarioAutenticado);
                 leilaoPaginacaoResponse.AddLinkMeusLeiloes();
                 leilaoPaginacaoResponse.AddLinkPaginaAnterior();
@@ -72,7 +78,7 @@ namespace LeilaoFake.Me.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e,"Erro"  + nameof(GetPaginacaoAsync));
+                _logger.LogError(e, "Erro" + nameof(GetPaginacaoAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -103,9 +109,9 @@ namespace LeilaoFake.Me.Api.Controllers
                 return Ok(leilaoResponse);
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                _logger.LogError(e,"Erro"  + nameof(GetIdAsync));
+                _logger.LogError(e, "Erro" + nameof(GetIdAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -137,9 +143,9 @@ namespace LeilaoFake.Me.Api.Controllers
 
                 return BadRequest(ErrorResponse.FromModelState(ModelState));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                _logger.LogError(e,"Erro"  + nameof(IncluirAsync));
+                _logger.LogError(e, "Erro" + nameof(IncluirAsync));
                 return BadRequest(ErrorResponse.From(e));
             }
         }
@@ -167,9 +173,9 @@ namespace LeilaoFake.Me.Api.Controllers
 
                 return BadRequest(ErrorResponse.FromModelState(ModelState));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                _logger.LogError(e,"Erro"  + nameof(UpdateAsync));
+                _logger.LogError(e, "Erro" + nameof(UpdateAsync));
                 return BadRequest(ErrorResponse.From(e));
             }
         }
@@ -192,9 +198,9 @@ namespace LeilaoFake.Me.Api.Controllers
                 return Ok();
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                _logger.LogError(e,"Erro"  + nameof(DeleteAsync));
+                _logger.LogError(e, "Erro" + nameof(DeleteAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -216,9 +222,9 @@ namespace LeilaoFake.Me.Api.Controllers
                 await _leilaoService.UpdateIniciaPregaoAsync(usuarioAutenticado.Id, leilaoId);
                 return Ok();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                _logger.LogError(e,"Erro"  + nameof(IniciarPregaoAsync));
+                _logger.LogError(e, "Erro" + nameof(IniciarPregaoAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -240,9 +246,9 @@ namespace LeilaoFake.Me.Api.Controllers
                 await _leilaoService.UpdateCancelarAsync(usuarioAutenticado.Id, leilaoId);
                 return Ok();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                _logger.LogError(e,"Erro"  + nameof(CancelarAsync));
+                _logger.LogError(e, "Erro" + nameof(CancelarAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -264,9 +270,9 @@ namespace LeilaoFake.Me.Api.Controllers
                 await _leilaoService.UpdateFinalizarAsync(usuarioAutenticado.Id, leilaoId);
                 return Ok();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                _logger.LogError(e,"Erro"  + nameof(GetPaginacaoAsync));
+                _logger.LogError(e, "Erro" + nameof(GetPaginacaoAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -288,9 +294,9 @@ namespace LeilaoFake.Me.Api.Controllers
                 await _leilaoService.UpdateTornarPublicoAsync(usuarioAutenticado.Id, leilaoId);
                 return Ok();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                _logger.LogError(e,"Erro"  + nameof(GetPaginacaoAsync));
+                _logger.LogError(e, "Erro" + nameof(GetPaginacaoAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }
@@ -312,9 +318,9 @@ namespace LeilaoFake.Me.Api.Controllers
                 await _leilaoService.UpdateTornarPrivadoAsync(usuarioAutenticado.Id, leilaoId);
                 return Ok();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                _logger.LogError(e,"Erro"  + nameof(GetPaginacaoAsync));
+                _logger.LogError(e, "Erro" + nameof(GetPaginacaoAsync));
                 return NotFound(ErrorResponse.From(e));
             }
         }

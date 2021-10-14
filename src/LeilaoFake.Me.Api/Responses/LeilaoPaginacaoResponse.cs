@@ -15,7 +15,7 @@ namespace LeilaoFake.Me.Api.Responses
         public int? Total { get; private set; }
         public int PorPagina { get; private set; }
         public string Order { get; private set; }
-        public bool MeusLeiloes { get; private set;}
+        public bool MeusLeiloes { get; private set; }
         public IList<LeilaoResponse> Resultados { get; private set; }
         public IList<LinkResponse> Links { get; private set; } = new List<LinkResponse>();
 
@@ -23,14 +23,15 @@ namespace LeilaoFake.Me.Api.Responses
         {
             _urlHelper = urlHelper;
             _usuarioAutenticado = usuarioAutenticado;
-            
+
             Search = leilaoPaginacao.Search;
             Pagina = leilaoPaginacao.Pagina;
             Total = leilaoPaginacao.Total;
             PorPagina = leilaoPaginacao.PorPagina;
             Order = leilaoPaginacao.Order;
             MeusLeiloes = !leilaoPaginacao.IsPublico;
-            Resultados = leilaoPaginacao.Resultados.Select(x => {
+            Resultados = leilaoPaginacao.Resultados.Select(x =>
+            {
                 var leilao = new LeilaoResponse(x, urlHelper, usuarioAutenticado);
                 leilao.AddAllLinks();
                 return leilao;
@@ -39,43 +40,61 @@ namespace LeilaoFake.Me.Api.Responses
 
         public void AddLinkMeusLeiloes()
         {
-            if(_usuarioAutenticado.IsAuthenticated){
+            if (_usuarioAutenticado.IsAuthenticated)
+            {
                 Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("GetAllMeusLeiloes","Leilao"),
-                    rel: "meus_leiloes", 
+                    href: _urlHelper.ActionLink("GetAllMeusLeiloes", "Leilao"),
+                    rel: "meus_leiloes",
                     metodo: "GET"));
             }
         }
 
         public void AddLinkTodosLeiloes()
         {
-            if(_usuarioAutenticado.IsAuthenticated){
+            if (_usuarioAutenticado.IsAuthenticated)
+            {
                 Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("GetPaginacao","Leilao"),
-                    rel: "meus_leiloes", 
+                    href: _urlHelper.ActionLink("GetPaginacao", "Leilao"),
+                    rel: "meus_leiloes",
                     metodo: "GET"));
             }
         }
 
         public void AddLinkProximaPagina()
         {
-            var totalDePaginas = this.Total / this.PorPagina;
+            double? totalDePaginas = this.Total / this.PorPagina;
 
-            if(totalDePaginas != 0 && totalDePaginas > this.Pagina){
+            if (totalDePaginas != 0 && totalDePaginas > this.Pagina)
+            {
                 Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("GetPaginacao","Leilao", new { Search, Pagina, PorPagina, Order, MeusLeiloes}),
-                    rel: "proxima_pagina", 
+                    href: _urlHelper.ActionLink("GetPaginacao", "Leilao", new
+                    {
+                        search = Search,
+                        pagina = (Pagina + 1),
+                        porPagina = PorPagina,
+                        order = Order,
+                        meusLeiloes = MeusLeiloes
+                    }),
+                    rel: "proxima_pagina",
                     metodo: "GET"));
             }
         }
 
         public void AddLinkPaginaAnterior()
         {
-            var totalDePaginas = this.Total / this.PorPagina;
-            if(totalDePaginas != 0 && this.Pagina > 1){
+            double? totalDePaginas = this.Total / this.PorPagina;
+            if (totalDePaginas != 0 && this.Pagina > 1)
+            {
                 Links.Add(new LinkResponse(
-                    href: _urlHelper.ActionLink("GetPaginacao","Leilao", new { Search, Pagina, PorPagina, Order, MeusLeiloes}),
-                    rel: "pagina_anterior", 
+                    href: _urlHelper.ActionLink("GetPaginacao", "Leilao", new
+                    {
+                        search = Search,
+                        pagina = (Pagina - 1),
+                        porPagina = PorPagina,
+                        order = Order,
+                        meusLeiloes = MeusLeiloes
+                    }),
+                    rel: "pagina_anterior",
                     metodo: "GET"));
             }
         }
