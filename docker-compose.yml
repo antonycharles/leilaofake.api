@@ -24,7 +24,8 @@ services:
         image: antonycharles/leilaofake
         container_name: leilao-fake-1
         volumes: 
-          - /home/apps/leilaofake/logs/:/app/logs/
+            - /home/apps/leilaofake/logs/:/app/logs/
+            - /home/apps/leilaofake/imagens:/app/wwwroot/imagens
         ports:
             - "80"
             - "443"
@@ -39,7 +40,8 @@ services:
         image: antonycharles/leilaofake
         container_name: leilao-fake-2
         volumes: 
-          - /home/apps/leilaofake/logs/:/app/logs/
+            - /home/apps/leilaofake/logs/:/app/logs/
+            - /home/apps/leilaofake/imagens:/app/wwwroot/imagens
         ports:
             - "80"
             - "443"
