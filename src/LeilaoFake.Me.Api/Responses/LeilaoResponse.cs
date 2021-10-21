@@ -75,6 +75,7 @@ namespace LeilaoFake.Me.Api.Responses
             AddLinkTornarPublico();
             AddLinkTornarPrivado();
             AddLinkIncluirLance();
+            AddLinkIncluirImagem();
         }
         
         public void AddLinkLeilaoId()
@@ -169,6 +170,17 @@ namespace LeilaoFake.Me.Api.Responses
                 Links.Add(new LinkResponse(
                     href: _urlHelper.ActionLink("Incluir", "Lance", new { }),
                     rel: "add_lance",
+                    metodo: "POST"));
+            }
+        }
+
+        public void AddLinkIncluirImagem()
+        {
+            if (_leilao.IsUpdate && _usuarioAutenticado.Id == _leilao.LeiloadoPorId)
+            {
+                Links.Add(new LinkResponse(
+                    href: _urlHelper.ActionLink("Incluir", "LeilaoImagem"),
+                    rel: "add_imagens",
                     metodo: "POST"));
             }
         }

@@ -40,6 +40,9 @@ namespace LeilaoFake.Me.Service.Services
             if (leilao == null)
                 throw new ArgumentException("Leilão não encontrado!");
 
+            if(!leilao.IsUpdate)
+                throw new ArgumentException("Não é possível alterar o leilão");
+
             await _leilaoImagemRepository.DeleteAsync(leilaoImagemId);
         }
     }

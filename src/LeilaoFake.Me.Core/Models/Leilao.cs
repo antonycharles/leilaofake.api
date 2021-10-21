@@ -106,7 +106,7 @@ namespace LeilaoFake.Me.Core.Models
         public void Update(LeilaoUpdate leilaoUpdate)
         {
             if(!IsUpdate)
-                throw new Exception("Não é possível alterar o leilão");
+                throw new Exception("Não é possível alterar este leilão");
 
             this.Titulo = leilaoUpdate.Titulo != null ? leilaoUpdate.Titulo : this.Titulo;
             this.Descricao = leilaoUpdate.Descricao != null ? leilaoUpdate.Descricao : this.Descricao;
@@ -119,7 +119,7 @@ namespace LeilaoFake.Me.Core.Models
         public void IniciaPregao()
         {
             if (!IsIniciaPregao)
-                throw new ArgumentException("Não foi possível iníciar o leilão que não esteja com status de Espera");
+                throw new ArgumentException("Não é possível iníciar um leilão que não esteja com status de Espera");
 
             this.Status = StatusLeilaoEnum.EmAndamento;
         }
@@ -147,7 +147,7 @@ namespace LeilaoFake.Me.Core.Models
         public void FinalizarLeilao()
         {
             if (!this.IsFinalizarLeilao)
-                throw new ArgumentException("Não é possível finalizar leilão que não está em andamento");
+                throw new ArgumentException("Não é possível finalizar um leilão que não está em andamento");
 
             this.Status = StatusLeilaoEnum.Finalizado;
 
@@ -179,7 +179,7 @@ namespace LeilaoFake.Me.Core.Models
         private bool LanceDeveSerAceito(Lance lance)
         {
             if (lance.InteressadoId == this.LeiloadoPorId)
-                throw new LeilaoNaoPermiteLanceDoLeiloadorException("Lance inválido, interessado não pode dra lance neste item!");
+                throw new LeilaoNaoPermiteLanceDoLeiloadorException("Lance inválido, interessado não pode dar lance neste leilão!");
 
             if (this.DataInicio > lance.CriadoEm || this.DataFim < lance.CriadoEm)
                 throw new LeilaoLanceForaDoPrazoException("Lance fora do prazo de início ou fim!");
