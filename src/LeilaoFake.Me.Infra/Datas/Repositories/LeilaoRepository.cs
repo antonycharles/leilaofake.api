@@ -31,13 +31,14 @@ namespace LeilaoFake.Me.Infra.Datas.Repositories
                     * 
                 FROM leiloes AS LE 
                 LEFT JOIN lances AS LA ON LE.id = LA.leilaoid 
+                LEFT JOIN usuarios AS U ON LA.interessadoid = U.id
                 LEFT JOIN leilaoimagens AS LEI ON LE.id = LEI.leilaoid
                 WHERE LE.id = @id";
 
             var leilaoDictionary = new Dictionary<string, Leilao>();
 
-            var result = await _dbConnection.QueryAsync<Leilao, Lance, LeilaoImagem, Leilao>(sql,
-                            (leilao, lance, leilaoImagem) =>
+            var result = await _dbConnection.QueryAsync<Leilao, Lance, Usuario, LeilaoImagem, Leilao>(sql,
+                            (leilao, lance, usuario, leilaoImagem) =>
                             {
                                 Leilao leilaoEntry;
 
@@ -47,8 +48,12 @@ namespace LeilaoFake.Me.Infra.Datas.Repositories
                                     leilaoDictionary.Add(leilaoEntry.Id, leilaoEntry);
                                 }
 
-                                if(lance != null)
+                                if(lance != null){
+                                    if(usuario != null)
+                                        lance.Interessado = usuario;
+                                        
                                     leilaoEntry.Lances.Add(lance);
+                                }
 
                                 if(leilaoImagem != null)
                                     leilaoEntry.LeilaoImagems.Add(leilaoImagem);

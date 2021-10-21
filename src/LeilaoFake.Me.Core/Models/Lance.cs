@@ -46,7 +46,7 @@ namespace LeilaoFake.Me.Core.Models
             {
                 return _interessado;
             }
-            private set
+            set
             {
                 
 
