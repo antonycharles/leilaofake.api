@@ -216,8 +216,8 @@ namespace LeilaoFake.Me.Infra.Datas.Repositories
         public async Task DeleteAsync(string leilaoId)
         {
             string sql = @"
-                DELETE FROM leiloes CASCADE
-                WHERE Id = @LeilaoId";
+                DELETE FROM leilaoimagens WHERE leilaoid = @LeilaoId;
+                DELETE FROM leiloes WHERE Id = @LeilaoId;";
 
             var resultado = await _dbConnection.ExecuteAsync(sql, new { LeilaoId = leilaoId });
 
