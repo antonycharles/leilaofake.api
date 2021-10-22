@@ -189,7 +189,7 @@ namespace LeilaoFake.Me.Api.Responses
 
         private string CriarLinkImagem()
         {
-            if (_leilao.CaminhoImagem == null)
+            if (_leilao.CaminhoImagem == null && _leilao.LeilaoImagems.Count() == 0)
                 return "";
 
             var uriBuilder = new UriBuilder
@@ -198,7 +198,10 @@ namespace LeilaoFake.Me.Api.Responses
                 Host = _urlHelper.ActionContext.HttpContext.Request.Host.Host
             };
 
-            return uriBuilder.Uri + _leilao.CaminhoImagem;
+            if(_leilao.CaminhoImagem != null)
+                return uriBuilder.Uri + _leilao.CaminhoImagem;
+
+            return _leilao.LeilaoImagems.Select(s => uriBuilder.Uri + s.Url).FirstOrDefault();
         }
     }
 }
