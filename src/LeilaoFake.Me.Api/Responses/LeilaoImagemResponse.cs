@@ -35,8 +35,7 @@ namespace LeilaoFake.Me.Api.Responses
             var uriBuilder = new UriBuilder
             {
                 Scheme = _urlHelper.ActionContext.HttpContext.Request.Scheme,
-                Host = _urlHelper.ActionContext.HttpContext.Request.Host.Host,
-                Port = _urlHelper.ActionContext.HttpContext.Request.Host.Port.GetValueOrDefault(80)
+                Host = _urlHelper.ActionContext.HttpContext.Request.Host.Host
             };
 
             Links.Add(new LinkResponse(
