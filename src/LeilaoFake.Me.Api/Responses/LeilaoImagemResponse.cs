@@ -36,9 +36,7 @@ namespace LeilaoFake.Me.Api.Responses
             {
                 Scheme = _urlHelper.ActionContext.HttpContext.Request.Scheme,
                 Host = _urlHelper.ActionContext.HttpContext.Request.Host.Host,
-                Port = _urlHelper.ActionContext.HttpContext.Request.Host.Port.GetValueOrDefault(80),
-                Path = _urlHelper.ActionContext.HttpContext.Request.Path.ToString(),
-                Query = _urlHelper.ActionContext.HttpContext.Request.QueryString.ToString()
+                Port = _urlHelper.ActionContext.HttpContext.Request.Host.Port.GetValueOrDefault(80)
             };
 
             Links.Add(new LinkResponse(
