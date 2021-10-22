@@ -18,6 +18,7 @@ namespace LeilaoFake.Me.Core.Models
         public DateTime CriadoEm { get; private set; }
         public DateTime? AlteradoEm { get; private set; } = DateTime.UtcNow;
         public int TotalLances { get; private set; }
+        public string CaminhoImagem { get; private set;}
 
         private string _titulo;
         public string Titulo {

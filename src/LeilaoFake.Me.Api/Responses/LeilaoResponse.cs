@@ -18,11 +18,11 @@ namespace LeilaoFake.Me.Api.Responses
         public string Id { get; private set; }
         public string LeiloadoPorId { get; private set; }
         public UsuarioResponse LeiloadoPor { get; private set; }
-        public bool IsPublico {get; private set; }
+        public bool IsPublico { get; private set; }
         public DateTime CriadoEm { get; private set; }
         public DateTime? AlteradoEm { get; private set; }
         public int TotalLances { get; private set; }
-        public string Titulo { get; private set;}
+        public string Titulo { get; private set; }
         public string Descricao { get; private set; }
         public double LanceMinimo { get; private set; }
         public DateTime DataInicio { get; private set; }
@@ -33,6 +33,7 @@ namespace LeilaoFake.Me.Api.Responses
         public LanceResponse LanceGanhador { get; private set; }
         public string Status { get; private set; }
         public IList<LinkResponse> Links { get; private set; } = new List<LinkResponse>();
+        public string LinkCaminhoImagem { get; private set; }
 
         public LeilaoResponse(Leilao leilao, IUrlHelper urlHelper, UsuarioAutenticado usuarioAutenticado)
         {
@@ -53,15 +54,16 @@ namespace LeilaoFake.Me.Api.Responses
             DataFim = leilao.DataFim;
             LanceGanhadorId = leilao.LanceGanhadorId;
             Status = leilao.StatusString;
+            LinkCaminhoImagem = this.CriarLinkImagem();
 
-            if(leilao.LanceGanhador != null)
+            if (leilao.LanceGanhador != null)
                 LanceGanhador = new LanceResponse(leilao.LanceGanhador, _urlHelper, usuarioAutenticado);
 
-            if(leilao.LeiloadoPor != null)
-                LeiloadoPor = new UsuarioResponse(leilao.LeiloadoPor,_urlHelper,usuarioAutenticado);
-                
-            Lances = leilao.Lances.Select(s => new LanceResponse(s,_urlHelper,usuarioAutenticado)).ToList();
-            LeilaoImagens = leilao.LeilaoImagems.Select(s => new LeilaoImagemResponse(s,_urlHelper,usuarioAutenticado)).ToList();
+            if (leilao.LeiloadoPor != null)
+                LeiloadoPor = new UsuarioResponse(leilao.LeiloadoPor, _urlHelper, usuarioAutenticado);
+
+            Lances = leilao.Lances.Select(s => new LanceResponse(s, _urlHelper, usuarioAutenticado)).ToList();
+            LeilaoImagens = leilao.LeilaoImagems.Select(s => new LeilaoImagemResponse(s, _urlHelper, usuarioAutenticado)).ToList();
         }
 
         public void AddAllLinks()
@@ -77,7 +79,7 @@ namespace LeilaoFake.Me.Api.Responses
             AddLinkIncluirLance();
             AddLinkIncluirImagem();
         }
-        
+
         public void AddLinkLeilaoId()
         {
             Links.Add(new LinkResponse(
@@ -183,6 +185,20 @@ namespace LeilaoFake.Me.Api.Responses
                     rel: "add_imagens",
                     metodo: "POST"));
             }
+        }
+
+        private string CriarLinkImagem()
+        {
+            if (_leilao.CaminhoImagem == null)
+                return "";
+
+            var uriBuilder = new UriBuilder
+            {
+                Scheme = _urlHelper.ActionContext.HttpContext.Request.Scheme,
+                Host = _urlHelper.ActionContext.HttpContext.Request.Host.Host
+            };
+
+            return uriBuilder.Uri + _leilao.CaminhoImagem;
         }
     }
 }

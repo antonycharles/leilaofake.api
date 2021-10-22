@@ -48,14 +48,15 @@ namespace LeilaoFake.Me.Infra.Datas.Repositories
                                     leilaoDictionary.Add(leilaoEntry.Id, leilaoEntry);
                                 }
 
-                                if(lance != null){
-                                    if(usuario != null)
+                                if (lance != null)
+                                {
+                                    if (usuario != null)
                                         lance.Interessado = usuario;
-                                        
+
                                     leilaoEntry.Lances.Add(lance);
                                 }
 
-                                if(leilaoImagem != null)
+                                if (leilaoImagem != null)
                                     leilaoEntry.LeilaoImagems.Add(leilaoImagem);
 
                                 return leilaoEntry;
@@ -88,10 +89,10 @@ namespace LeilaoFake.Me.Infra.Datas.Repositories
                                     leilaoDictionary.Add(leilaoEntry.Id, leilaoEntry);
                                 }
 
-                                if(lance != null)
+                                if (lance != null)
                                     leilaoEntry.Lances.Add(lance);
 
-                                if(leilaoImagem != null)
+                                if (leilaoImagem != null)
                                     leilaoEntry.LeilaoImagems.Add(leilaoImagem);
 
                                 return leilaoEntry;
@@ -115,7 +116,8 @@ namespace LeilaoFake.Me.Infra.Datas.Repositories
                     (leiloadoporid = @LeiloadoPorId OR @LeiloadoPorId IS NULL);
                 SELECT 
                     LE.*,
-                    (SELECT COUNT(id) FROM lances WHERE leilaoid = LE.id) AS totallances
+                    (SELECT COUNT(id) FROM lances WHERE leilaoid = LE.id) AS totallances,
+	                (SELECT url FROM leilaoimagens WHERE leilaoid = LE.id LIMIT 1) AS caminhoimagem
                 FROM leiloes AS LE 
                 WHERE 
                     (LE.status = @Status OR @Status IS NULL) AND
@@ -126,7 +128,7 @@ namespace LeilaoFake.Me.Infra.Datas.Repositories
                 ORDER BY {0}
                 LIMIT @PorPagina 
                 OFFSET(@Pagina - 1) * @PorPagina;
-            ",data.Order);
+            ", data.Order);
 
             using (var result = await _dbConnection.QueryMultipleAsync(sql, data))
             {
@@ -159,10 +161,10 @@ namespace LeilaoFake.Me.Infra.Datas.Repositories
                                     leilaoDictionary.Add(leilaoEntry.Id, leilaoEntry);
                                 }
 
-                                if(lance != null)
+                                if (lance != null)
                                     leilaoEntry.Lances.Add(lance);
 
-                                if(leilaoImagem != null)
+                                if (leilaoImagem != null)
                                     leilaoEntry.LeilaoImagems.Add(leilaoImagem);
 
                                 return leilaoEntry;
@@ -217,7 +219,7 @@ namespace LeilaoFake.Me.Infra.Datas.Repositories
                 DELETE FROM leiloes CASCADE
                 WHERE Id = @LeilaoId";
 
-            var resultado = await _dbConnection.ExecuteAsync(sql, new{ LeilaoId = leilaoId });
+            var resultado = await _dbConnection.ExecuteAsync(sql, new { LeilaoId = leilaoId });
 
             if (resultado == 0)
                 throw new Exception("Leilão não foi deletado");
