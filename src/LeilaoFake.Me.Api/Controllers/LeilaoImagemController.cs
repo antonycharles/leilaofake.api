@@ -91,7 +91,7 @@ namespace LeilaoFake.Me.Api.Controllers
             var extensao = model.Imagem.FileName.Split(".");
 
             string novoNome = Guid.NewGuid().ToString() + "." + extensao[1];
-            string diretorio = _configuration.GetValue<string>("DiretorioImagens");
+            string diretorio = "/" + _configuration.GetValue<string>("DiretorioImagens");
             string novoNomeDiretorio = diretorio + novoNome;
 
             if (!Directory.Exists(_environment.WebRootPath + diretorio))
