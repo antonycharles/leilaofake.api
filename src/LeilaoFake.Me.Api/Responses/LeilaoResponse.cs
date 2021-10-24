@@ -167,7 +167,7 @@ namespace LeilaoFake.Me.Api.Responses
 
         public void AddLinkIncluirLance()
         {
-            if (_leilao.IsLanceDeveSerAceito)
+            if (_leilao.IsLanceDeveSerAceito && _usuarioAutenticado.IsAuthenticated)
             {
                 Links.Add(new LinkResponse(
                     href: _urlHelper.ActionLink("Incluir", "Lance", new { }),
