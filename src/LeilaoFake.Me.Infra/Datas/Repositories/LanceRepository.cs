@@ -12,17 +12,25 @@ namespace LeilaoFake.Me.Infra.Datas.Repositories
     public class LanceRepository : ILanceRepository
     {
         private readonly IDbConnection _dbConnection;
+        private readonly IUsuarioRepository _usuarioRepository;
 
-        public LanceRepository(IDbConnection dbConnection)
+        public LanceRepository(IDbConnection dbConnection, IUsuarioRepository usuarioRepository)
         {
             _dbConnection = dbConnection;
+            _usuarioRepository = usuarioRepository;
         }
 
         public async Task<Lance> GetByIdAsync(string lanceId)
         {
-            string sql = "SELECT * FROM lances WHERE Id = @Id";
+            string sql = @"
+                SELECT * FROM lances AS LA
+                LEFT JOIN usuarios AS U ON LA.interessadoid = U.id
+                WHERE Id = @Id";
 
             var resultado = await _dbConnection.QueryFirstOrDefaultAsync<Lance>(sql, new { Id = lanceId });
+
+            if(resultado.InteressadoId != null)
+                resultado.Interessado = await _usuarioRepository.GetByIdAsync(resultado.InteressadoId);
 
             return resultado;
         }

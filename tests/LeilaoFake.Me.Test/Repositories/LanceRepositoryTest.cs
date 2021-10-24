@@ -38,9 +38,9 @@ namespace LeilaoFake.Me.Test.Repositories
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var LanceRepository = new LanceRepository(_dbConnection);
-            var leilaoRepository = new LeilaoRepository(_dbConnection);
             var usuarioRepository = new UsuarioRepository(_dbConnection);
+            var LanceRepository = new LanceRepository(_dbConnection,usuarioRepository);
+            var leilaoRepository = new LeilaoRepository(_dbConnection);
             var usuarioId = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
             var leilaoId = await leilaoRepository.InsertAsync(
                 new Leilao(usuarioId, "Teste leilão", null, DateTime.UtcNow, DateTime.UtcNow.AddDays(5), 250.50)
