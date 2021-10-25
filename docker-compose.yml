@@ -15,7 +15,7 @@ services:
             - production-network
         depends_on:
             - leilaofake1
-            - leilaofake2
+#            - leilaofake2
 
     leilaofake1:
         build:
