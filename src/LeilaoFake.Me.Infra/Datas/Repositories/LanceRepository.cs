@@ -23,9 +23,8 @@ namespace LeilaoFake.Me.Infra.Datas.Repositories
         public async Task<Lance> GetByIdAsync(string lanceId)
         {
             string sql = @"
-                SELECT * FROM lances AS LA
-                LEFT JOIN usuarios AS U ON LA.interessadoid = U.id
-                WHERE Id = @Id";
+                SELECT * FROM lances
+                WHERE id = @Id";
 
             var resultado = await _dbConnection.QueryFirstOrDefaultAsync<Lance>(sql, new { Id = lanceId });
 
@@ -37,7 +36,7 @@ namespace LeilaoFake.Me.Infra.Datas.Repositories
 
         public async Task<IList<Lance>> GetAllByLeilaoIdAsync(string leilaoId)
         {
-            string sql = "SELECT * FROM lances WHERE LeilaoId = @LeilaoId";
+            string sql = "SELECT * FROM lances WHERE leilaoid = @LeilaoId";
 
             var resultado = await _dbConnection.QueryAsync<Lance>(sql, new { LeilaoId = leilaoId });
 
