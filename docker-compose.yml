@@ -33,21 +33,21 @@ services:
             - production-network
             - postgres-network
 
-    leilaofake2:
-        build:
-            dockerfile: ./docker/leilaofake.dockerfile
-            context: .
-        image: antonycharles/leilaofake
-        container_name: leilao-fake-2
-        volumes: 
-            - /home/apps/leilaofake/logs/:/app/logs/
-            - /home/apps/leilaofake/imagens:/app/wwwroot/imagens
-        ports:
-            - "80"
-            - "443"
-        networks: 
-            - production-network
-            - postgres-network
+#    leilaofake2:
+#        build:
+#            dockerfile: ./docker/leilaofake.dockerfile
+#            context: .
+#        image: antonycharles/leilaofake
+#        container_name: leilao-fake-2
+#        volumes: 
+#            - /home/apps/leilaofake/logs/:/app/logs/
+#            - /home/apps/leilaofake/imagens:/app/wwwroot/imagens
+#        ports:
+#            - "80"
+#            - "443"
+#        networks: 
+#            - production-network
+#            - postgres-network
 
 networks:
     production-network:
