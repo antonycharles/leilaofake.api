@@ -106,7 +106,7 @@ namespace LeilaoFake.Me.Api.Controllers
                 filestream.Flush();
             }
 
-            return novoNomeDiretorio;
+            return _configuration.GetValue<string>("DiretorioImagens") + novoNome;
         }
     }
 }
