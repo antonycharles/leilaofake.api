@@ -7,6 +7,7 @@
 <span><img src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white"/></span>
 
 ##### Documentação: <a href="https://leilao-fake.decodes.me/swagger/" target="_blank">https://leilao-fake.decodes.me/swagger/</a>
+##### Web App: <a href="https://leilao-fake.decodes.me/" target="_blank">https://leilao-fake.decodes.me/</a>
 
 Api desenvolvida em .Net Core para fazer o controle de Leilões e seus lances.
 
