@@ -7,7 +7,7 @@ services:
         image: vpsdecodes/nginx
         container_name: nginx-vps-decodes
         volumes: 
-          - /home/cloud:/etc/nginx/html
+          - /home:/etc/nginx/html
         ports:
             - "80:80"
             - "443:443"
