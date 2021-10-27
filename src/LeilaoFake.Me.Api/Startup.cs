@@ -28,6 +28,9 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IO;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace LeilaoFake.Me.Api
 {
@@ -75,6 +78,22 @@ namespace LeilaoFake.Me.Api
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidIssuer = tokenConfigurations.Issuer,
                     ValidAudience = tokenConfigurations.Audience
+                };
+                x.Events = new JwtBearerEvents
+                {
+                    OnChallenge = async context =>
+                    {
+
+                        context.Response.StatusCode = 401;
+                        context.Response.ContentType = "application/json; charset=utf-8";
+                        await context.Response.WriteAsync(JsonConvert.SerializeObject(ErrorResponse.FromMessage("usuario não autenticado")));
+                    },
+                    OnForbidden = async context =>
+                    {
+                        context.Response.StatusCode = 403;
+                        context.Response.ContentType = "application/json; charset=utf-8";
+                        await context.Response.WriteAsync(JsonConvert.SerializeObject(ErrorResponse.FromMessage("Acesso não autorizado para está funcionalidade!")));
+                    }
                 };
             });
 

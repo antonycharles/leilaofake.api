@@ -35,5 +35,13 @@ namespace LeilaoFake.Me.Api.Responses
                 Details = errors.Select(s => s.ErrorMessage).ToArray()
             };
         }
+
+        public static ErrorResponse FromMessage(string message)
+        {
+            return new ErrorResponse{
+                Code = 100,
+                Message = message
+            };
+        }
     }
 }
