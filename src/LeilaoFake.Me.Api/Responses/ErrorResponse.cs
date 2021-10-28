@@ -8,10 +8,10 @@ namespace LeilaoFake.Me.Api.Responses
 {
     public class ErrorResponse
     {
-        public int Code { get; set; }
-        public string Message { get; set; }
-        public string[] Details { get; set; }
-        public ErrorResponse InnerError { get; set; }
+        public int code { get; set; }
+        public string message { get; set; }
+        public string[] details { get; set; }
+        public ErrorResponse innerError { get; set; }
 
         public static ErrorResponse From(Exception e)
         {
@@ -19,9 +19,9 @@ namespace LeilaoFake.Me.Api.Responses
 
             return new ErrorResponse
             {
-                Code = e.HResult,
-                Message = e.Message,
-                InnerError = ErrorResponse.From(e.InnerException)
+                code = e.HResult,
+                message = e.Message,
+                innerError = ErrorResponse.From(e.InnerException)
             };
         }
 
@@ -30,17 +30,17 @@ namespace LeilaoFake.Me.Api.Responses
             var errors = modelState.Values.SelectMany(x => x.Errors);
             return new ErrorResponse
             {
-                Code = 100,
-                Message = "Requisição inválida!",
-                Details = errors.Select(s => s.ErrorMessage).ToArray()
+                code = 100,
+                message = "Requisição inválida!",
+                details = errors.Select(s => s.ErrorMessage).ToArray()
             };
         }
 
         public static ErrorResponse FromMessage(string message)
         {
             return new ErrorResponse{
-                Code = 100,
-                Message = message
+                code = 100,
+                message = message
             };
         }
     }
