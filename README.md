@@ -28,4 +28,7 @@ Api desenvolvida em .Net Core para fazer o controle de Leilões e seus lances.
 
 ### Fase 3
 1. Visualizar logs via browser.
+2. Usar "nameof" para mapear as classes no FluentMigrator e no Dapper (refatoração).
+3. Permitir que o cliente possa consumir a api via XML.
+4. Permitir que o cliente possa definir quais campos devem ser retornados.
 
