@@ -1,0 +1,21 @@
+using Dapper;
+using LeilaoFake.Me.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LeilaoFake.Me.Infra.Datas.Repositories
+{
+    public class <%= props.nome %>Repository : I<%= props.nome %>Repository
+    {
+        private readonly IDbConnection _dbConnection;
+
+        public <%= props.nome %>Repository(IDbConnection dbConnection)
+        {
+            _dbConnection = dbConnection;
+        }
+    }
+}

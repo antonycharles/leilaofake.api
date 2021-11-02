@@ -116,6 +116,7 @@ namespace LeilaoFake.Me.Api
 
             services.AddSingleton<IConfiguration>(Configuration);
 
+            //GERA-COMMANDS-ADD-REPOSITORY
             services.AddTransient<ILeilaoRepository,LeilaoRepository>();
             services.AddTransient<IUsuarioRepository, UsuarioRepository>();
             services.AddTransient<ILanceRepository, LanceRepository>();

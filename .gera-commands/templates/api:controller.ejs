@@ -1,0 +1,184 @@
+using LeilaoFake.Me.Api.Responses;
+using LeilaoFake.Me.Api.Requests;
+using LeilaoFake.Me.Core.Models;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
+
+namespace LeilaoFake.Me.Api.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class <%= props.nome %>Controller : ControllerBase
+    {
+        private readonly ILogger _logger;
+        private readonly IUrlHelper _urlHelper;
+
+        public <%= props.nome %>Controller(IUrlHelper urlHelper, ILogger<<%= props.nome %>Controller> logger)
+        {
+            _urlHelper = urlHelper;
+            _logger = logger;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parametro"> página atual da pesquisa.</param>
+        /// <returns>? response</returns>
+        [HttpGet]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(ErrorResponse), 404)]
+        [ProducesResponseType(typeof(ErrorResponse), 500)]
+        public async Task<IActionResult> GetAllAsync(int? parametro)
+        {
+            try
+            {
+                _logger.LogInformation("Inicio {0}", nameof(GetAllAsync));
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Erro" + nameof(GetAllAsync));
+                return NotFound(ErrorResponse.From(e));
+            }
+            finally
+            {
+                _logger.LogInformation("Fim {0}", nameof(GetAllAsync));
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="itemId"> id do ? que deseja buscar.</param>
+        /// <returns>? response</returns>
+        [HttpGet("{itemId}")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(ErrorResponse), 404)]
+        [ProducesResponseType(typeof(ErrorResponse), 500)]
+        public async Task<IActionResult> GetIdAsync(string itemId)
+        {
+            try
+            {
+                _logger.LogInformation("Inicio {0}", nameof(GetIdAsync));
+
+                return Ok();
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Erro" + nameof(GetIdAsync));
+                return NotFound(ErrorResponse.From(e));
+            }
+            finally
+            {
+                _logger.LogInformation("Fim {0}", nameof(GetIdAsync));
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="model"> FromBody com as informações sober o ?</param>
+        /// <returns>? criado</returns>
+        [HttpPost]
+        [Authorize(Roles = "default")]
+        [ProducesResponseType(typeof(string), 201)]
+        [ProducesResponseType(typeof(ErrorResponse), 401)]
+        [ProducesResponseType(typeof(ErrorResponse), 500)]
+        public async Task<IActionResult> IncluirAsync([FromBody] object model)
+        {
+            try
+            {
+                _logger.LogInformation("Inicio {0}", nameof(IncluirAsync));
+
+                if (ModelState.IsValid)
+                {
+
+                    return CreatedAtAction("GetId", new { itemId = 0 }, "");
+                }
+
+                return BadRequest(ErrorResponse.FromModelState(ModelState));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Erro" + nameof(IncluirAsync));
+                return BadRequest(ErrorResponse.From(e));
+            }
+            finally
+            {
+                _logger.LogInformation("Fim {0}", nameof(IncluirAsync));
+            }
+        }
+
+        /// <summary>
+        /// Altera um ?.
+        /// </summary>
+        /// <param name="itemId"> id do ? que deseja alterar.</param>
+        /// <param name="model"> FromBody com as informações sober o ?</param>
+        [HttpPut("{itemId}")]
+        [Authorize(Roles = "default")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ErrorResponse), 400)]
+        [ProducesResponseType(typeof(ErrorResponse), 500)]
+        public async Task<IActionResult> UpdateAsync(string itemId, [FromBody] object model)
+        {
+            try
+            {
+                _logger.LogInformation("Inicio {0}", nameof(UpdateAsync));
+
+                if (ModelState.IsValid)
+                {
+                    return Ok();
+                }
+
+                return BadRequest(ErrorResponse.FromModelState(ModelState));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Erro" + nameof(UpdateAsync));
+                return BadRequest(ErrorResponse.From(e));
+            }
+            finally
+            {
+                _logger.LogInformation("Fim {0}", nameof(UpdateAsync));
+            }
+        }
+
+        /// <summary>
+        /// Remove um ?.
+        /// </summary>
+        /// <param name="itemId"> id do ? que deseja deletar.</param>
+        [HttpDelete("{itemId}")]
+        [Authorize(Roles = "default")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ErrorResponse), 400)]
+        [ProducesResponseType(typeof(ErrorResponse), 500)]
+        public async Task<IActionResult> DeleteAsync(string itemId)
+        {
+            try
+            {
+                _logger.LogInformation("Inicio {0}", nameof(DeleteAsync));
+
+
+                return Ok();
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Erro" + nameof(DeleteAsync));
+                return NotFound(ErrorResponse.From(e));
+            }
+            finally
+            {
+                _logger.LogInformation("Fim {0}", nameof(DeleteAsync));
+            }
+        }
+    }
+}
