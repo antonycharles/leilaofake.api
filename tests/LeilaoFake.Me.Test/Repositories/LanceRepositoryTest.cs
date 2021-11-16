@@ -14,23 +14,10 @@ using Xunit;
 
 namespace LeilaoFake.Me.Test.Repositories
 {
-    public class LanceRepositoryTest 
+    public class LanceRepositoryTest : RepositoryTests
     {
-        private readonly IDbConnection _dbConnection;
-
-        public LanceRepositoryTest()
+        public LanceRepositoryTest() : base("db_lf_test_lance_re", true)
         {
-            var dataBaseTest = new DataBaseTest("db_leilaofake_test_lance_repository");
-            //dataBaseTest.CreateDataBaseTest();
-
-            var serviceProvider = dataBaseTest.CreateServices();
-
-            using (var scope = serviceProvider.CreateScope())
-            {
-                dataBaseTest.UpdateDatabase(scope.ServiceProvider);
-            }
-
-            _dbConnection = dataBaseTest.GetConnection();
         }
 
         [Fact]
@@ -38,9 +25,9 @@ namespace LeilaoFake.Me.Test.Repositories
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var usuarioRepository = new UsuarioRepository(_dbConnection);
-            var LanceRepository = new LanceRepository(_dbConnection,usuarioRepository);
-            var leilaoRepository = new LeilaoRepository(_dbConnection);
+            var usuarioRepository = new UsuarioRepository(this.Context);
+            var LanceRepository = new LanceRepository(this.Context,usuarioRepository);
+            var leilaoRepository = new LeilaoRepository(this.Context);
             var usuarioId = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
             var leilaoId = await leilaoRepository.InsertAsync(
                 new Leilao(usuarioId, "Teste leilão", null, DateTime.UtcNow, DateTime.UtcNow.AddDays(5), 250.50)

@@ -13,23 +13,10 @@ using Xunit;
 
 namespace LeilaoFake.Me.Test.Repositories 
 {
-    public class LeilaoRepositoryTest
+    public class LeilaoRepositoryTest : RepositoryTests
     {
-        private readonly IDbConnection _dbConnection;
-
-        public LeilaoRepositoryTest()
+        public LeilaoRepositoryTest() : base("db_lf_test_leilao_re", true)
         {
-            var dataBaseTest = new DataBaseTest("db_leilaofake_test_leilao_repository");
-            //dataBaseTest.CreateDataBaseTest();
-
-            var serviceProvider = dataBaseTest.CreateServices();
-
-            using (var scope = serviceProvider.CreateScope())
-            {
-                dataBaseTest.UpdateDatabase(scope.ServiceProvider);
-            }
-
-            _dbConnection = dataBaseTest.GetConnection();
         }
 
         [Fact]
@@ -37,8 +24,8 @@ namespace LeilaoFake.Me.Test.Repositories
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var leilaoRepository = new LeilaoRepository(_dbConnection);
-            var usuarioRepository = new UsuarioRepository(_dbConnection);
+            var leilaoRepository = new LeilaoRepository(this.Context);
+            var usuarioRepository = new UsuarioRepository(this.Context);
             var usuarioId = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
 
             //Act
@@ -55,8 +42,8 @@ namespace LeilaoFake.Me.Test.Repositories
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var leilaoRepository = new LeilaoRepository(_dbConnection);
-            var usuarioRepository = new UsuarioRepository(_dbConnection);
+            var leilaoRepository = new LeilaoRepository(this.Context);
+            var usuarioRepository = new UsuarioRepository(this.Context);
             var usuarioId = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
 
             var leilaoId = await leilaoRepository.InsertAsync(
@@ -75,8 +62,8 @@ namespace LeilaoFake.Me.Test.Repositories
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var leilaoRepository = new LeilaoRepository(_dbConnection);
-            var usuarioRepository = new UsuarioRepository(_dbConnection);
+            var leilaoRepository = new LeilaoRepository(this.Context);
+            var usuarioRepository = new UsuarioRepository(this.Context);
             var usuarioId = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
 
             var leilaoId = await leilaoRepository.InsertAsync(
@@ -95,8 +82,8 @@ namespace LeilaoFake.Me.Test.Repositories
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var leilaoRepository = new LeilaoRepository(_dbConnection);
-            var usuarioRepository = new UsuarioRepository(_dbConnection);
+            var leilaoRepository = new LeilaoRepository(this.Context);
+            var usuarioRepository = new UsuarioRepository(this.Context);
             var usuarioId = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
 
             var leilaoId = await leilaoRepository.InsertAsync(
@@ -115,8 +102,8 @@ namespace LeilaoFake.Me.Test.Repositories
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var leilaoRepository = new LeilaoRepository(_dbConnection);
-            var usuarioRepository = new UsuarioRepository(_dbConnection);
+            var leilaoRepository = new LeilaoRepository(this.Context);
+            var usuarioRepository = new UsuarioRepository(this.Context);
             var usuarioId = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
 
             var totalLeiloes = 20;
@@ -139,8 +126,8 @@ namespace LeilaoFake.Me.Test.Repositories
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var leilaoRepository = new LeilaoRepository(_dbConnection);
-            var usuarioRepository = new UsuarioRepository(_dbConnection);
+            var leilaoRepository = new LeilaoRepository(this.Context);
+            var usuarioRepository = new UsuarioRepository(this.Context);
             var usuarioId = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
 
             var leilaoId = await leilaoRepository.InsertAsync(
@@ -160,8 +147,8 @@ namespace LeilaoFake.Me.Test.Repositories
         {
             //Arranje
             var faker = new Faker("pt_BR");
-            var leilaoRepository = new LeilaoRepository(_dbConnection);
-            var usuarioRepository = new UsuarioRepository(_dbConnection);
+            var leilaoRepository = new LeilaoRepository(this.Context);
+            var usuarioRepository = new UsuarioRepository(this.Context);
             var usuarioId = await usuarioRepository.InsertAsync(new Usuario(faker.Name.FullName(), faker.Internet.Email()));
 
             var leilaoId = await leilaoRepository.InsertAsync(
