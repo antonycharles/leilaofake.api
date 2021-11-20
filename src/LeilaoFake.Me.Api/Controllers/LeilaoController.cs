@@ -208,7 +208,7 @@ namespace LeilaoFake.Me.Api.Controllers
         /// Inicia pregão do leilão.
         /// </summary>
         /// <param name="leilaoId"> id do leilão que deseja iniciar pregão.</param>
-        [HttpPatch("{leilaoId}/iniciar-pregao")]
+        [HttpPatch("{leilaoId}/iniciar")]
         [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
@@ -256,7 +256,7 @@ namespace LeilaoFake.Me.Api.Controllers
         /// Finaliza leilão.
         /// </summary>
         /// <param name="leilaoId"> id do leilão que deseja finalizar.</param>
-        [HttpPatch("{leilaoId}/finaliza")]
+        [HttpPatch("{leilaoId}/finalizar")]
         [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
@@ -280,7 +280,7 @@ namespace LeilaoFake.Me.Api.Controllers
         /// Tornar público leilão.
         /// </summary>
         /// <param name="leilaoId"> id do leilão que deseja tornar público.</param>
-        [HttpPatch("{leilaoId}/tornar-publico")]
+        [HttpPatch("{leilaoId}/publico")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
@@ -304,7 +304,7 @@ namespace LeilaoFake.Me.Api.Controllers
         /// Tornar privado leilão.
         /// </summary>
         /// <param name="leilaoId"> id do leilão que deseja tornar privado.</param>
-        [HttpPatch("{leilaoId}/tornar-privado")]
+        [HttpPatch("{leilaoId}/privado")]
         [Authorize(Roles = "default,admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponse), 404)]
